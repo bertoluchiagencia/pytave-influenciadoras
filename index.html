@@ -337,6 +337,7 @@ function adminView(){
   const ls=S.infs.slice().sort((a,b)=>(a.nome||"").localeCompare(b.nome||"","pt-BR"));
   return el("div",{},
     el("div",{class:"row",style:"justify-content:flex-end;margin-bottom:14px"},
+      el("button",{class:"btn",onclick:sheetImportar},"🔄 Sincronizar com o Sistema Bertoluchi"),
       el("button",{class:"btn",onclick:sheetConfig},"⚙ Site da Pytave"),
       el("button",{class:"btn primary",onclick:()=>formInflu()},"+ Nova influenciadora")),
     !ls.length?el("div",{class:"empty"},"Nenhuma influenciadora cadastrada ainda. Clique em “+ Nova influenciadora”."):
@@ -353,6 +354,35 @@ async function sheetConfig(){
     catch(x){err.textContent="Não deu para salvar.";err.hidden=false}
   });
   scrim(el("div",{},el("div",{class:"sh"},el("h2",{},"Configurações"),el("button",{class:"close",onclick:closeOverlay},"×")),form));
+}
+async function sheetImportar(){
+  const txt=el("textarea",{style:"min-height:220px;width:100%;font-family:var(--f-num)",placeholder:"Cole aqui o JSON gerado a partir do Sistema Bertoluchi (uma lista de influenciadoras)."});
+  const err=el("div",{class:"err",hidden:true});
+  const ok=el("div",{class:"note",hidden:true,style:"color:var(--ok)"});
+  const form=el("form",{},
+    el("p",{class:"muted",style:"margin:0 0 10px"},"Isso atualiza (ou cria) as influenciadoras pelo token, sem apagar nada que já existe aqui. Usado pela sincronização com o Sistema Bertoluchi."),
+    el("label",{class:"f"},"JSON",txt),err,ok,
+    el("div",{class:"row",style:"margin-top:10px"},
+      el("button",{class:"btn primary",type:"submit"},"Importar"),
+      el("button",{class:"btn",type:"button",onclick:closeOverlay},"Cancelar")));
+  form.addEventListener("submit",async e=>{
+    e.preventDefault();
+    err.hidden=true;ok.hidden=true;
+    let arr;
+    try{arr=JSON.parse(txt.value)}catch(z){err.textContent="JSON inválido.";err.hidden=false;return}
+    if(!Array.isArray(arr)){err.textContent="Precisa ser uma lista de influenciadoras.";err.hidden=false;return}
+    try{
+      let n=0;
+      for(const item of arr){
+        if(!item.token)continue;
+        await influRef(item.token).set(item,{merge:true});
+        n++;
+      }
+      ok.textContent=n+" influenciadora(s) sincronizada(s).";ok.hidden=false;
+      setTimeout(closeOverlay,1400);
+    }catch(z){err.textContent="Não deu para importar. Tente de novo.";err.hidden=false}
+  });
+  scrim(el("div",{},el("div",{class:"sh"},el("h2",{},"Sincronizar com o Sistema Bertoluchi"),el("button",{class:"close",onclick:closeOverlay},"×")),form));
 }
 function formInflu(x){
   const isNew=!x;x=x||{};
