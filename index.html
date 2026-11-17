@@ -1,0 +1,498 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>Influenciadoras Pytave</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Urbanist:wght@600;700&family=Figtree:wght@400;500;600&family=DM+Mono:wght@400;500&display=swap">
+<style>
+:root{color-scheme:light;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+html{scroll-padding-top:env(safe-area-inset-top,0px)}
+img{max-width:100%}
+[hidden]{display:none!important}
+:root{
+  --bg:#FBFAF3; --surface:#FFFFFF; --ink:#1F2E35; --muted:#5E7480; --line:#E2E5DA;
+  --accent:#4A7385; --accent-ink:#FFFFFF; --accent-soft:#E2EFF5;
+  --band:#FFFCCA; --logo:#6D94A5; --coral:#B9584A; --coral-soft:#FBE6E2;
+  --ok:#5B6A12; --ok-soft:#EEF2D2; --warn:#9A5A00; --warn-soft:#FBEFD9; --bad:#B42318; --bad-soft:#FBE4E1;
+  --f-display:"Urbanist","Avenir Next",system-ui,sans-serif;
+  --f-body:"Figtree","Segoe UI",system-ui,sans-serif;
+  --f-num:"DM Mono",ui-monospace,"SFMono-Regular",Menlo,monospace;
+  --r:10px;
+}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]){
+  --bg:#11191D; --surface:#19242A; --ink:#EEF3F5; --muted:#93A7B1; --line:#2A3940;
+  --accent:#8FB8CA; --accent-ink:#0E171B; --accent-soft:#213640;
+  --band:#19242A; --logo:#B8D8E9; --coral:#EAA197; --coral-soft:#3A2420;
+  --ok:#CFD88E; --ok-soft:#2A2F17; --warn:#E9A84A; --warn-soft:#33260F; --bad:#F07B6E; --bad-soft:#3A1A17;
+  color-scheme:dark}}
+:root[data-theme="dark"]{
+  --bg:#11191D; --surface:#19242A; --ink:#EEF3F5; --muted:#93A7B1; --line:#2A3940;
+  --accent:#8FB8CA; --accent-ink:#0E171B; --accent-soft:#213640;
+  --band:#19242A; --logo:#B8D8E9; --coral:#EAA197; --coral-soft:#3A2420;
+  --ok:#CFD88E; --ok-soft:#2A2F17; --warn:#E9A84A; --warn-soft:#33260F; --bad:#F07B6E; --bad-soft:#3A1A17;
+  color-scheme:dark}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--ink);font-family:var(--f-body);font-size:15px;line-height:1.5;padding-bottom:40px}
+h1,h2,h3{font-family:var(--f-display);font-weight:700;letter-spacing:-.01em;text-wrap:balance;margin:0}
+h2{font-size:1.3rem} h3{font-size:1.02rem}
+.num{font-family:var(--f-num);font-variant-numeric:tabular-nums}
+.muted{color:var(--muted)}
+.eyebrow{font-size:.72rem;text-transform:uppercase;letter-spacing:.09em;color:var(--muted);font-weight:600}
+.wrap{max-width:720px;margin:0 auto;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px))}
+.top{border-bottom:1px solid var(--line);background:var(--band)}
+.top .wrap{display:flex;flex-wrap:wrap;align-items:center;gap:12px 20px;padding-block:18px}
+.brand{display:flex;align-items:center;gap:10px;flex:1 1 auto;min-width:0}
+.brand .logo{height:34px;width:auto;color:var(--logo);display:block}
+.brand .tag{font-family:var(--f-display);font-weight:700;color:var(--ink);font-size:1.02rem;padding-left:12px;border-left:1.5px solid var(--logo)}
+main{padding-block:22px 48px}
+.panel{background:var(--surface);border:1px solid var(--line);border-radius:var(--r);padding:18px;margin-bottom:14px}
+.panel-head{display:flex;flex-wrap:wrap;align-items:center;justify-content:space-between;gap:10px;margin-bottom:12px}
+.coupon{background:var(--ink);color:var(--bg);border-radius:var(--r);padding:18px;text-align:center;margin-bottom:14px}
+.coupon small{display:block;opacity:.65;font-size:12px;text-transform:uppercase;letter-spacing:.1em;margin-bottom:6px}
+.coupon .code{font-family:var(--f-num);font-size:28px;font-weight:500;letter-spacing:.04em}
+.btn{appearance:none;font:inherit;font-weight:600;border:1px solid var(--line);background:var(--surface);color:var(--ink);border-radius:8px;padding:9px 16px;cursor:pointer;display:inline-flex;align-items:center;gap:8px;text-decoration:none}
+.btn:hover{border-color:var(--muted)}
+.btn.primary{background:var(--accent);border-color:var(--accent);color:var(--accent-ink)}
+.btn.small{padding:6px 11px;font-size:.85rem;border-radius:7px}
+.btn.danger{color:var(--bad)}
+.btn:disabled{opacity:.5;cursor:default}
+input,textarea,select{width:100%;border:1px solid var(--line);border-radius:8px;padding:9px 11px;background:var(--bg);color:var(--ink);font:inherit}
+input:focus-visible,textarea:focus-visible,select:focus-visible{outline:2px solid var(--accent);outline-offset:0;border-color:transparent}
+textarea{min-height:70px;resize:vertical}
+.fields{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,160px),1fr));gap:12px}
+.f{display:block;margin-bottom:12px;font-size:.8rem;font-weight:600;color:var(--muted)}
+.f input,.f textarea,.f select{margin-top:6px;font-size:14px;font-weight:400;color:var(--ink)}
+.row{display:flex;gap:10px;flex-wrap:wrap;align-items:center}
+.pill{display:inline-flex;align-items:center;gap:6px;border-radius:999px;padding:5px 12px;font-size:12.5px;font-weight:600;white-space:nowrap}
+.pill.ok{background:var(--ok-soft);color:var(--ok)}
+.pill.bad{background:var(--bad-soft);color:var(--bad)}
+.pill.warn{background:var(--warn-soft);color:var(--warn)}
+.pill.neutral{background:var(--accent-soft);color:var(--accent)}
+.list{display:flex;flex-direction:column;gap:10px}
+.li{display:flex;justify-content:space-between;align-items:center;gap:10px;border:1px solid var(--line);border-radius:10px;padding:10px 12px}
+.li a{color:var(--accent);text-decoration:none;font-weight:600;word-break:break-all}
+.li time,.li .d{color:var(--muted);font-size:12.5px;white-space:nowrap}
+.inflrow{display:flex;justify-content:space-between;align-items:center;gap:10px;border:1px solid var(--line);border-radius:10px;padding:12px 14px;cursor:pointer;background:var(--surface)}
+.inflrow:hover{border-color:var(--accent)}
+.agrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(250px,1fr));gap:14px}
+.acard{background:var(--surface);border:1px solid var(--line);border-radius:var(--r);padding:16px;display:flex;flex-direction:column;gap:10px;min-width:0}
+.acard .t{display:flex;align-items:center;gap:12px;cursor:pointer;min-width:0}
+.acard .t:hover h3{color:var(--accent)}
+.acard .ava{width:46px;height:46px;border-radius:999px;background:var(--accent-soft);color:var(--accent);display:flex;align-items:center;justify-content:center;font-family:var(--f-display);font-weight:700;font-size:15px;flex:0 0 46px}
+.acard .t h3{font-size:15px}
+.acard .h{color:var(--muted);font-size:12px;margin-top:2px}
+.acard .acc{border:1px solid var(--line);border-radius:8px;padding:10px;background:var(--bg);display:flex;flex-direction:column;gap:7px;font-size:12.5px}
+.acard .acc .row2{display:flex;align-items:center;justify-content:space-between;gap:8px}
+.acard .acc code{font-family:var(--f-num);background:var(--surface);border:1px solid var(--line);border-radius:6px;padding:4px 8px;word-break:break-all;display:block;font-size:12px}
+.acard .acts{display:flex;gap:8px;flex-wrap:wrap;margin-top:auto}
+.sec{font-size:.72rem;text-transform:uppercase;letter-spacing:.08em;color:var(--muted);font-weight:600;margin:18px 0 8px}
+.empty{text-align:center;padding:36px 16px;color:var(--muted);border:1px dashed var(--line);border-radius:var(--r)}
+.err{color:var(--bad);font-size:13px;margin:8px 0}
+.scrim{position:fixed;inset:0;background:rgba(20,20,20,.45);display:flex;align-items:flex-end;justify-content:center;z-index:50}
+@media (min-width:640px){.scrim{align-items:center}}
+.sheet{background:var(--surface);border-radius:18px 18px 0 0;padding:20px;width:100%;max-width:560px;max-height:88vh;overflow:auto}
+@media (min-width:640px){.sheet{border-radius:var(--r)}}
+.sh{display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:14px}
+.close{background:transparent;border:none;color:var(--muted);font-size:20px;cursor:pointer;line-height:1;padding:4px}
+.tokenbox{font-family:var(--f-num);font-size:12.5px;background:var(--bg);border:1px solid var(--line);border-radius:8px;padding:8px 10px;word-break:break-all}
+.gbtn{display:inline-flex;align-items:center;gap:10px;background:#fff;color:#1F2E35;border:1px solid var(--line);border-radius:8px;padding:10px 16px;font-weight:600;cursor:pointer;font:inherit}
+.spin{display:inline-block;width:16px;height:16px;border:2px solid var(--line);border-top-color:var(--accent);border-radius:50%;animation:sp .7s linear infinite}
+@keyframes sp{to{transform:rotate(360deg)}}
+</style>
+</head>
+<body>
+<div id="app"></div>
+
+<script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-auth-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-firestore-compat.js"></script>
+<script>
+/* ---------------- Firebase ---------------- */
+const firebaseConfig = {
+  apiKey: "AIzaSyBttGz16TTL7peZUz17XwfZL9ZoZ0Sv69Y",
+  authDomain: "pytave-influenciadoras.firebaseapp.com",
+  projectId: "pytave-influenciadoras",
+  storageBucket: "pytave-influenciadoras.firebasestorage.app",
+  messagingSenderId: "98863512315",
+  appId: "1:98863512315:web:0309010cf2056d44210e5e"
+};
+firebase.initializeApp(firebaseConfig);
+const auth = firebase.auth();
+const db = firebase.firestore();
+const ADMIN_DOMAIN = "@bertoluchiagencia.com.br";
+
+/* ---------------- helpers ---------------- */
+const el=(tag,attrs,...kids)=>{const e=document.createElement(tag);for(const[k,v]of Object.entries(attrs||{})){if(v===null||v===undefined||v===false)continue;if(k==="class")e.className=v;else if(k==="html")e.innerHTML=v;else if(k==="value")e.value=v;else if(k.startsWith("on"))e.addEventListener(k.slice(2),v);else e.setAttribute(k,v===true?"":v)}for(const k of kids.flat()){if(k==null||k===false)continue;e.append(k.nodeType?k:document.createTextNode(String(k)))}return e};
+const $=s=>document.querySelector(s);
+const root=$("#app");
+const MESES=["Janeiro","Fevereiro","Março","Abril","Maio","Junho","Julho","Agosto","Setembro","Outubro","Novembro","Dezembro"];
+const now=new Date();
+const ymKey=(d)=>d.getFullYear()+"-"+String(d.getMonth()+1).padStart(2,"0");
+const curYM=ymKey(now);
+const fmtYM=k=>{const[y,m]=(k||"").split("-");return m?MESES[Number(m)-1]+"/"+y:"—"};
+const addMonthsYM=(k,n)=>{const[y,m]=k.split("-").map(Number);const d=new Date(y,m-1+n,1);return ymKey(d)};
+const fmtData=s=>{if(!s)return"";const[a,b,c]=s.slice(0,10).split("-");return c+"/"+b+"/"+a};
+const plural=(n,s,p)=>n+" "+(n===1?s:(p||s+"s"));
+const uid=()=>Math.random().toString(36).slice(2,10);
+const randToken=()=>Array.from({length:16},()=>"abcdefghijkmnpqrstuvwxyz23456789"[Math.floor(Math.random()*33)]).join("");
+const PYTAVE_LOGO='<svg class="logo" viewBox="320 395 1270 385" role="img" aria-label="Pytave" fill="currentColor"><path d="M430.24,615.75h-59.93v79.01h-39.32v-259.17h99.24c13.48,0,25.63,2.29,36.45,6.87,10.81,4.58,20.04,10.95,27.67,19.09,7.63,8.15,13.55,17.75,17.75,28.82,4.2,11.07,6.3,23.09,6.3,36.07,0,11.45-1.85,22.52-5.53,33.21-3.69,10.69-9.23,20.17-16.6,28.44-7.38,8.27-16.54,14.95-27.48,20.04-10.94,5.09-23.8,7.63-38.55,7.63ZM420.7,471.09h-50.38v109.16h50.38c8.14,0,15.78-1.27,22.9-3.82,7.12-2.54,13.29-6.23,18.51-11.07,5.21-4.83,9.35-10.56,12.4-17.18,3.05-6.61,4.58-14.12,4.58-22.52,0-6.87-1.28-13.55-3.82-20.04-2.55-6.49-6.24-12.34-11.07-17.56-4.84-5.21-10.88-9.35-18.13-12.41-7.25-3.05-15.72-4.58-25.38-4.58Z"/><path d="M566.13,498.57v106.11c0,5.34,1.01,10.88,3.05,16.6,2.03,5.73,5.15,10.94,9.35,15.65,4.2,4.71,9.41,8.59,15.65,11.64,6.23,3.05,13.55,4.58,21.95,4.58,7.38,0,14.18-1.53,20.42-4.58,6.23-3.06,11.58-6.93,16.03-11.64,4.45-4.71,7.88-9.92,10.31-15.65,2.41-5.73,3.63-11.26,3.63-16.6v-106.11h39.31v204.21c0,9.16-1.72,18-5.15,26.53-3.43,8.52-8.53,16.09-15.27,22.71-6.75,6.61-15.14,11.89-25.19,15.84-10.05,3.94-21.7,5.91-34.93,5.91s-24.5-1.91-34.54-5.73c-10.06-3.82-18.51-8.85-25.38-15.08-6.87-6.24-12.15-13.49-15.84-21.76-3.69-8.27-5.79-16.86-6.3-25.77h38.55c.51,5.35,2.03,10.05,4.58,14.12,2.54,4.07,5.85,7.44,9.92,10.11,4.07,2.67,8.59,4.71,13.55,6.11,4.96,1.39,10.12,2.1,15.46,2.1s10.5-.7,15.46-2.1c4.96-1.4,9.35-3.57,13.17-6.49,3.82-2.93,6.87-6.62,9.16-11.07,2.29-4.45,3.44-9.73,3.44-15.84v-38.17c-7.13,7.63-15.4,13.68-24.81,18.13-9.42,4.45-19.85,6.68-31.3,6.68-13.23,0-25.07-2.54-35.5-7.63-10.44-5.09-19.22-11.7-26.34-19.85-7.13-8.14-12.54-17.18-16.22-27.1-3.69-9.92-5.53-19.85-5.53-29.77v-106.11h39.31Z"/><path d="M839.44,697.44c-1.02.25-2.67.44-4.96.57-2.29.12-4.71.25-7.25.38-2.55.13-4.96.19-7.25.19h-5.34c-22.14,0-37.92-5.66-47.33-16.99-9.42-11.32-14.12-28.69-14.12-52.1v-97.71h-38.93v-23.67c6.36,0,12.72-.82,19.08-2.48,6.36-1.65,12.02-4.58,16.99-8.78,4.96-4.2,8.97-9.98,12.02-17.37,3.05-7.38,4.58-16.66,4.58-27.86h25.57v46.95h48.47v33.21h-48.47v96.95c0,12.47,2.42,20.8,7.25,25,4.83,4.2,12.47,6.3,22.9,6.3h21.38l-4.58,37.41Z"/><path d="M940.29,494.75c13.23,0,24.94,1.97,35.12,5.92,10.17,3.95,18.7,9.23,25.57,15.84,6.87,6.62,12.08,14.19,15.65,22.71,3.56,8.53,5.35,17.37,5.35,26.53v129.01h-34.36l-3.82-20.61v-.38c-7.38,7.13-16.22,13.04-26.53,17.75-10.3,4.71-22.46,7.06-36.45,7.06-8.91,0-17.56-1.28-25.96-3.82-8.4-2.54-15.9-6.3-22.52-11.26-6.62-4.96-11.9-11.13-15.84-18.51-3.95-7.38-5.92-16.03-5.92-25.96,0-7.63,1.59-15.08,4.77-22.33,3.18-7.25,7.88-13.74,14.12-19.47,6.23-5.72,14.06-10.36,23.48-13.93,9.41-3.56,20.35-5.34,32.83-5.34h58.02v-11.83c0-6.11-1.28-11.39-3.82-15.84-2.54-4.45-5.85-8.14-9.92-11.07-4.07-2.92-8.72-5.09-13.93-6.49-5.22-1.4-10.49-2.1-15.84-2.1s-10.49.7-15.46,2.1c-4.97,1.4-9.49,3.43-13.55,6.11-4.07,2.67-7.44,6.05-10.11,10.11-2.67,4.07-4.26,8.78-4.77,14.12h-38.17c.51-8.9,2.61-17.49,6.3-25.77,3.68-8.27,8.97-15.52,15.84-21.76,6.87-6.23,15.33-11.26,25.38-15.08,10.05-3.82,21.57-5.73,34.54-5.73ZM923.88,608.5c-11.2,0-19.66,2.74-25.38,8.21-5.73,5.47-8.72,11.52-8.97,18.13,0,3.57.76,7.13,2.29,10.69,1.53,3.57,3.94,6.75,7.25,9.54,3.3,2.8,7.5,5.03,12.6,6.68,5.08,1.66,11.2,2.48,18.32,2.48,6.11,0,12.4-1.15,18.89-3.44,6.49-2.29,12.28-5.66,17.37-10.12,5.08-4.45,9.29-9.86,12.6-16.22,3.3-6.36,4.96-13.61,4.96-21.76v-4.2h-59.93Z"/><path d="M1237.93,607.36v6.87c0,5.34,1.08,10.88,3.25,16.6,2.16,5.73,5.34,10.94,9.54,15.65,4.2,4.71,9.41,8.53,15.65,11.45,6.23,2.93,13.55,4.39,21.95,4.39,6.11,0,12.08-.63,17.94-1.91,5.85-1.27,11-3.25,15.46-5.92,4.45-2.67,8.08-5.98,10.88-9.92,2.79-3.94,4.2-8.59,4.2-13.93h38.94c0,8.65-2.1,17.05-6.3,25.19-4.2,8.15-10.05,15.33-17.56,21.57-7.51,6.24-16.22,11.2-26.15,14.89-9.93,3.69-20.61,5.53-32.06,5.53h-11.07c-13.23,0-25.07-2.48-35.5-7.44-10.43-4.96-19.22-11.45-26.33-19.47-7.13-8.02-12.6-16.99-16.42-26.91-3.82-9.92-5.72-19.85-5.72-29.77v-35.12c0-9.92,2.03-19.85,6.11-29.77,4.07-9.92,9.79-18.95,17.18-27.1,7.37-8.14,16.41-14.75,27.1-19.85,10.69-5.09,22.65-7.63,35.88-7.63h6.49c11.45,0,22.39,2.16,32.83,6.49,10.43,4.33,19.6,10.18,27.48,17.56,6.61,6.36,11.7,12.66,15.27,18.89,3.56,6.24,6.11,12.73,7.64,19.47,1.53,6.75,2.41,13.81,2.67,21.19.25,7.38.38,15.27.38,23.67v5.34h-139.7ZM1339.46,574.53c0-6.61-1.34-12.65-4.01-18.13-2.68-5.47-6.24-10.11-10.69-13.93-4.45-3.82-9.61-6.74-15.46-8.78-5.86-2.03-11.96-3.05-18.32-3.05-7.64,0-14.57,1.34-20.8,4.01-6.24,2.67-11.64,6.11-16.22,10.31-4.58,4.2-8.2,8.91-10.88,14.12-2.67,5.22-4.26,10.37-4.77,15.46h101.15Z"/><path d="M1395.65,449.66l-19.53,30.64c-17.08-10.89-44.77-23.87-79.52-23.38h-.8c-15.69.17-39.43.44-60.44,15.62-10.56,7.61-16.46,16.17-28.27,33.19-3.28,4.73-13.18,19.04-28.38,53.16-.42.96-.86,1.93-1.26,2.89-8.9,20.19-16.91,41.2-23.88,62.64l-2.95,7.72-25.05,65.68h-37.79l-74.82-196.19h39.7l54.21,150.01,10.71-29.84,27.54-76.77c.13-.31.27-.6.4-.91,8.52-19.15,15.55-32.69,21.23-42.49,4.22-7.33,7.7-12.56,10.45-16.56,12.83-18.52,21.28-30.73,36.9-42,30.36-21.9,63.49-22.28,81.3-22.48l.78-.02h2.02c42.76,0,76.53,15.75,97.45,29.09Z"/><path d="M1145.12,545.03l-27.54,76.77-1.22-.38c8.19-26.16,17.86-51.88,28.76-76.39Z"/><path d="M1153.57,624.42c-.86,2.62-1.71,5.23-2.53,7.85l-.42-.13,2.95-7.72Z"/><path d="M1572.76,514.27c.35,11.03,2.01,21.73,4.78,31.83-7.68,2.06-15.71,5-23.62,9.32-15.95,8.63-24.92,18.93-35.26,30.9-6.91,7.99-19.79,22.85-27.88,44.63-3.37,9.02-5.55,18.24-6.67,27.61-1.06,9.32-1,18.73.24,28.3v11.72h-41.82v-362.97c13.35-9.81,26.75-19.57,40.16-29.38-.65,77.83-1.36,155.62-2.01,233.45,6.44-12.7,14.18-25.99,26.7-40.85,10.75-12.75,22.92-27.12,44-39.14,12.82-7.26,25.75-11.92,37.62-14.86-6.5,11.77-11.22,24.91-13.88,38.89-.89.44-1.77.93-2.66,1.42-15.59,8.88-24.81,19.81-34.55,31.39-4.9,5.84-8.98,11.38-12.46,16.77,2.42-1.52,4.9-2.99,7.56-4.46,13.47-7.31,27.17-11.82,39.75-14.57Z"/></svg>';
+let S={ready:false,authReady:false,authUser:null,isAdmin:false,infs:[],cfg:{},myTok:null,myMes:null};
+
+function toast(msg){const t=el("div",{style:"position:fixed;left:50%;bottom:24px;transform:translateX(-50%);background:var(--ink);color:var(--bg);padding:10px 16px;border-radius:10px;font-size:13px;z-index:99;box-shadow:0 8px 24px rgba(0,0,0,.18)"},msg);document.body.append(t);setTimeout(()=>t.remove(),2600)}
+function closeOverlay(){const s=$(".scrim");if(s)s.remove()}
+function scrim(content){closeOverlay();const w=el("div",{class:"scrim",onclick:e=>{if(e.target.classList.contains("scrim"))closeOverlay()}},el("div",{class:"sheet"},content));document.body.append(w)}
+function copiar(txt){navigator.clipboard.writeText(txt).then(()=>toast("Copiado"),()=>toast(txt))}
+function influRef(token){return db.collection("influs").doc(token)}
+const cfgRef=db.collection("config").doc("pytave");
+
+/* ---------------- render raiz ---------------- */
+function render(){
+  root.replaceChildren();
+  root.append(
+    el("header",{class:"top"},el("div",{class:"wrap"},el("div",{class:"brand"},el("span",{html:PYTAVE_LOGO}),el("span",{class:"tag"},"Influenciadoras")),
+      S.isAdmin?el("button",{class:"btn small",onclick:()=>auth.signOut()},"Sair"):null)),
+    el("main",{class:"wrap"},body()));
+}
+function body(){
+  if(!S.authReady)return el("div",{class:"empty"},el("span",{class:"spin"}),el("div",{style:"margin-top:10px"},"Carregando…"));
+  if(S.isAdmin)return adminView();
+  return publicaView();
+}
+
+/* ---------------- regras de entrega ---------------- */
+function regrasDe(x){return Object.assign({reelsPorMes:2,feedPorMes:0,storiesSeqPorMes:4},x.regras||{})}
+function mesesContrato(x){
+  if(x.inicio&&x.duracaoMeses){const ini=x.inicio.slice(0,7);const out=[];for(let i=0;i<x.duracaoMeses;i++)out.push(addMonthsYM(ini,i));return out}
+  return[addMonthsYM(curYM,-1),curYM,addMonthsYM(curYM,1)];
+}
+function contaMes(x,ym){const c=(x.conteudo||{})[ym]||{};return{reels:(c.reels||[]).length,feed:(c.feed||[]).length,stories:(c.stories||[]).length}}
+function pendenteDe(x,ym){
+  const r=regrasDe(x),c=contaMes(x,ym);
+  const faltas=[];
+  if(r.reelsPorMes>c.reels)faltas.push(plural(r.reelsPorMes-c.reels,"Reels"));
+  if(r.storiesSeqPorMes>c.stories)faltas.push(plural(r.storiesSeqPorMes-c.stories,"sequência de Stories","sequências de Stories"));
+  if(r.feedPorMes>c.feed)faltas.push(plural(r.feedPorMes-c.feed,"post no feed","posts no feed"));
+  return faltas;
+}
+
+/* ---------------- visão pública (influenciadora) ---------------- */
+async function carregarPorToken(tok){
+  try{
+    const snap=await influRef(tok).get();
+    if(!snap.exists){S.myInfErr=true;render();return}
+    S.myInf={id:snap.id,...snap.data()};
+    influRef(tok).onSnapshot(s=>{if(s.exists){S.myInf={id:s.id,...s.data()};render()}});
+  }catch(e){S.myInfErr=true;render()}
+}
+function gateAcesso(){
+  const code=el("input",{type:"text",placeholder:"Ex.: ab12cd34ef56gh78",autocapitalize:"off",autocorrect:"off",spellcheck:"false"});
+  const err=el("div",{class:"err",hidden:true});
+  const form=el("form",{style:"margin-top:4px"},
+    el("label",{class:"f"},"Código de acesso",code),err,
+    el("button",{class:"btn primary",type:"submit",style:"width:100%;justify-content:center"},"Entrar"));
+  form.addEventListener("submit",e=>{
+    e.preventDefault();
+    const tok=code.value.trim();
+    if(!tok){err.textContent="Digite o código.";err.hidden=false;return}
+    location.hash=tok;
+  });
+  return el("div",{class:"panel",style:"max-width:420px;margin:40px auto"},
+    el("div",{style:"text-align:center;margin-bottom:14px"},el("span",{html:PYTAVE_LOGO})),
+    el("h3",{style:"text-align:center;margin-bottom:4px"},"Acesse seu painel"),
+    el("p",{class:"muted",style:"text-align:center;margin-bottom:16px"},S.myInfErr?"Esse link não é válido ou pode ter mudado. Digite o código que a equipe Pytave te enviou.":"Digite o código que a equipe Pytave te enviou, ou abra o link que você recebeu."),
+    form,
+    el("div",{style:"text-align:center;margin-top:18px"},el("button",{class:"btn small",type:"button",onclick:entrarComoEquipe},"Sou da equipe Pytave")));
+}
+function publicaView(){
+  if(!S.myTok)return gateAcesso();
+  if(S.myInf===undefined){carregarPorToken(S.myTok);return el("div",{class:"empty"},el("span",{class:"spin"}),el("div",{style:"margin-top:10px"},"Carregando…"))}
+  const inf=S.myInf;
+  if(!inf)return gateAcesso();
+  const meses=mesesContrato(inf);
+  if(!S.myMes||!meses.includes(S.myMes))S.myMes=meses.includes(curYM)?curYM:meses[meses.length-1];
+  const r=regrasDe(inf),c=contaMes(inf,S.myMes),falta=pendenteDe(inf,S.myMes);
+  return el("div",{},
+    el("div",{class:"coupon"},el("small",{},"Seu cupom de desconto"),el("div",{class:"code"},inf.cupom||"—"),
+      inf.cupom?el("button",{class:"btn small",style:"margin-top:12px;background:transparent;color:var(--bg);border-color:rgba(255,255,255,.3)",onclick:()=>copiar(inf.cupom)},"Copiar cupom"):null),
+    el("div",{class:"panel"},
+      el("h2",{},inf.nome),
+      el("p",{class:"muted",style:"margin-top:6px"},contratoTxt(inf)),
+      el("div",{class:"sec"},"O que você precisa entregar"),
+      el("p",{},inf.entregaveis||"Ainda não definido. Fale com a Beatriz."),
+      el("div",{class:"sec"},"Produto deste mês ("+fmtYM(curYM)+")"),
+      produtoPill(inf,curYM),
+      S.cfg.siteUrl?el("div",{style:"margin-top:14px"},el("a",{class:"btn",href:S.cfg.siteUrl,target:"_blank",rel:"noopener"},"🛍️ Visitar o site da Pytave")):null),
+    el("div",{class:"panel"},
+      el("div",{class:"panel-head"},el("h2",{style:"font-size:16px"},"Minhas postagens"),
+        el("select",{style:"width:auto",onchange:e=>{S.myMes=e.target.value;render()}},meses.map(m=>el("option",{value:m,selected:m===S.myMes},fmtYM(m))))),
+      falta.length?el("div",{class:"pill warn",style:"margin-bottom:12px"},"Pendente: "+falta.join(", ")):el("div",{class:"pill ok",style:"margin-bottom:12px"},"Tudo em dia neste mês ✅"),
+      conteudoSecao(inf,S.myMes,"reels","🎬 Reels",r.reelsPorMes,c.reels,true),
+      r.feedPorMes||((inf.conteudo||{})[S.myMes]||{}).feed?.length?conteudoSecao(inf,S.myMes,"feed","🖼️ Posts no feed",r.feedPorMes,c.feed,true):null,
+      conteudoSecao(inf,S.myMes,"stories","📱 Sequências de Stories",r.storiesSeqPorMes,c.stories,false)),
+    el("div",{class:"panel"},
+      el("h2",{style:"font-size:16px"},"Minhas compras"),
+      el("p",{class:"muted",style:"margin-top:4px"},"Importado pela equipe Pytave."),
+      comprasList(inf)));
+}
+function contratoTxt(inf){
+  if(!inf.inicio)return"Contrato: data de início não cadastrada.";
+  if(!inf.duracaoMeses)return"Contrato desde "+fmtData(inf.inicio)+" · prazo indeterminado";
+  const fim=addMonthsYM(inf.inicio.slice(0,7),inf.duracaoMeses-1);
+  return"Contrato de "+fmtData(inf.inicio)+" até "+fmtYM(fim)+" ("+plural(inf.duracaoMeses,"mês","meses")+")";
+}
+function produtoPill(inf,ym){
+  const v=(inf.produtos||{})[ym];
+  return v?el("span",{class:"pill ok"},"✅ Recebido"):el("span",{class:"pill warn"},"⏳ Ainda não chegou");
+}
+function conteudoSecao(inf,ym,tipo,label,meta,feito,temLink){
+  const itens=((inf.conteudo||{})[ym]||{})[tipo]||[];
+  const linkBtn=el("input",{type:"url",placeholder:"Link da postagem",required:true});
+  const data=el("input",{type:"date",value:new Date().toISOString().slice(0,10)});
+  const err=el("div",{class:"err",hidden:true});
+  const form=el("form",{style:"margin-top:8px;display:flex;gap:8px;flex-wrap:wrap;align-items:end"},
+    temLink?el("label",{class:"f",style:"flex:1 1 200px;margin:0"},"Link",linkBtn):null,
+    el("label",{class:"f",style:"flex:0 1 150px;margin:0"},"Data",data),
+    el("button",{class:"btn primary small",type:"submit"},"+ Adicionar"));
+  form.append(err);
+  form.addEventListener("submit",async e=>{
+    e.preventDefault();
+    if(temLink&&(!linkBtn.value.trim()||!/^https?:\/\//.test(linkBtn.value.trim()))){err.textContent="Cole o link completo (começando com https://)";err.hidden=false;return}
+    try{
+      const novo={id:uid(),data:data.value||new Date().toISOString().slice(0,10)};if(temLink)novo.link=linkBtn.value.trim();
+      const conteudo=JSON.parse(JSON.stringify(inf.conteudo||{}));if(!conteudo[ym])conteudo[ym]={reels:[],feed:[],stories:[]};if(!conteudo[ym][tipo])conteudo[ym][tipo]=[];
+      conteudo[ym][tipo].push(novo);
+      await influRef(inf.id).update({conteudo,atualizadoEm:new Date().toISOString()});
+      linkBtn.value="";toast("Adicionado");
+    }catch(x){err.textContent="Não deu para salvar. Tente de novo.";err.hidden=false}
+  });
+  return el("div",{style:"margin-bottom:16px"},
+    el("div",{class:"row",style:"justify-content:space-between"},el("b",{},label),el("span",{class:"pill "+(feito>=meta?"ok":"neutral")},feito+" de "+meta+" neste mês")),
+    itens.length?el("div",{class:"list",style:"margin-top:8px"},itens.slice().sort((a,b)=>(b.data||"").localeCompare(a.data||"")).map(p=>el("div",{class:"li"},
+      p.link?el("a",{href:p.link,target:"_blank",rel:"noopener"},(p.link||"").slice(0,42)+((p.link||"").length>42?"…":"")):el("span",{},"Sequência registrada"),
+      el("div",{style:"display:flex;align-items:center;gap:8px"},el("span",{class:"d"},fmtData(p.data)),
+        el("button",{class:"close","aria-label":"Remover",onclick:async()=>{try{const conteudo=JSON.parse(JSON.stringify(inf.conteudo||{}));conteudo[ym][tipo]=conteudo[ym][tipo].filter(x=>x.id!==p.id);await influRef(inf.id).update({conteudo});toast("Removido")}catch(e){toast("Não deu para remover.")}}},"×"))))):null,
+    form);
+}
+function comprasList(inf){
+  const cs=(inf.compras||[]).slice().sort((a,b)=>(b.data||"").localeCompare(a.data||""));
+  if(!cs.length)return el("div",{class:"empty"},"Nenhuma compra registrada ainda.");
+  return el("div",{class:"list",style:"margin-top:10px"},cs.map(c=>el("div",{class:"li"},
+    el("span",{},(c.pedido?c.pedido+" · ":"")+(c.itens||"")),
+    el("div",{style:"display:flex;align-items:center;gap:8px"},el("span",{class:"d"},fmtData(c.data)),c.valor?el("b",{class:"num"},"R$ "+Number(c.valor).toFixed(2).replace(".",",")):null))));
+}
+
+/* ---------------- login equipe ---------------- */
+function entrarComoEquipe(){
+  const prov=new firebase.auth.GoogleAuthProvider();
+  prov.setCustomParameters({hd:"bertoluchiagencia.com.br"});
+  auth.signInWithPopup(prov).catch(e=>{
+    if(e.code!=="auth/popup-closed-by-user")toast("Não foi possível entrar: "+(e.message||e.code))
+  });
+}
+function telaLoginEquipe(){
+  return el("div",{class:"panel",style:"max-width:420px;margin:40px auto;text-align:center"},
+    el("div",{style:"margin-bottom:14px"},el("span",{html:PYTAVE_LOGO})),
+    el("h3",{style:"margin-bottom:4px"},"Área da equipe"),
+    el("p",{class:"muted",style:"margin-bottom:18px"},"Entre com o Google da agência para gerenciar as influenciadoras."),
+    el("button",{class:"gbtn",onclick:entrarComoEquipe},"Entrar com o Google"));
+}
+
+/* ---------------- visão admin (Beatriz) ---------------- */
+function iniciais(nome){
+  const p=(nome||"").trim().split(/\s+/).filter(Boolean);
+  if(!p.length)return"?";
+  return (p[0][0]+(p.length>1?p[p.length-1][0]:"")).toUpperCase();
+}
+function linkDe(x){return location.origin+location.pathname+"#"+x.id}
+function acessoBlock(x){
+  return el("div",{class:"acc",onclick:e=>e.stopPropagation()},
+    el("div",{class:"row2"},el("span",{class:"muted"},"Link"),
+      el("button",{class:"btn small",type:"button",onclick:()=>copiar(linkDe(x))},"Copiar link")),
+    el("div",{class:"row2"},el("span",{class:"muted"},"Código"),
+      el("button",{class:"btn small",type:"button",onclick:()=>copiar(x.id)},"Copiar código")),
+    el("code",{},x.id));
+}
+function acardInflu(x){
+  const falta=!(x.produtos||{})[curYM];
+  const pend=pendenteDe(x,curYM);
+  const abre=()=>sheetInflu(x.id);
+  return el("div",{class:"acard"},
+    el("div",{class:"t",role:"button",tabindex:"0",title:"Abrir a ficha de "+x.nome,onclick:abre,onkeydown:e=>{if(e.key==="Enter")abre()}},
+      el("div",{class:"ava"},iniciais(x.nome)),
+      el("div",{style:"min-width:0;flex:1"},
+        el("h3",{},x.nome),
+        el("div",{class:"h"},contratoTxt(x)))),
+    el("div",{class:"row",style:"gap:6px"},
+      falta?el("span",{class:"pill warn"},"Produto pendente"):el("span",{class:"pill ok"},"Produto ok"),
+      pend.length?el("span",{class:"pill warn"},"Falta "+pend.join(", ")):el("span",{class:"pill ok"},"Em dia"),
+      x.cupom?el("span",{class:"pill neutral"},"Cupom "+x.cupom):null),
+    acessoBlock(x),
+    el("div",{class:"acts"},
+      el("button",{class:"btn small",type:"button",onclick:abre},"Ver ficha"),
+      el("button",{class:"btn small",type:"button",onclick:()=>formInflu(x)},"Editar")));
+}
+function adminView(){
+  const ls=S.infs.slice().sort((a,b)=>(a.nome||"").localeCompare(b.nome||"","pt-BR"));
+  return el("div",{},
+    el("div",{class:"row",style:"justify-content:flex-end;margin-bottom:14px"},
+      el("button",{class:"btn",onclick:sheetConfig},"⚙ Site da Pytave"),
+      el("button",{class:"btn primary",onclick:()=>formInflu()},"+ Nova influenciadora")),
+    !ls.length?el("div",{class:"empty"},"Nenhuma influenciadora cadastrada ainda. Clique em “+ Nova influenciadora”."):
+    el("div",{class:"agrid"},ls.map(x=>acardInflu(x))));
+}
+async function sheetConfig(){
+  const url=el("input",{type:"url",value:S.cfg.siteUrl||"",placeholder:"https://pytave.com.br"});
+  const err=el("div",{class:"err",hidden:true});
+  const form=el("form",{},el("label",{class:"f"},"Link do site da Pytave (as influenciadoras veem isso no painel delas)",url),err,
+    el("div",{class:"row"},el("button",{class:"btn primary",type:"submit"},"Salvar"),el("button",{class:"btn",type:"button",onclick:closeOverlay},"Cancelar")));
+  form.addEventListener("submit",async e=>{
+    e.preventDefault();
+    try{await cfgRef.set({siteUrl:url.value.trim()},{merge:true});toast("Salvo");closeOverlay()}
+    catch(x){err.textContent="Não deu para salvar.";err.hidden=false}
+  });
+  scrim(el("div",{},el("div",{class:"sh"},el("h2",{},"Configurações"),el("button",{class:"close",onclick:closeOverlay},"×")),form));
+}
+function formInflu(x){
+  const isNew=!x;x=x||{};
+  const nome=el("input",{value:x.nome||"",required:true});
+  const cupom=el("input",{value:x.cupom||"",placeholder:"Ex.: LARISSA10"});
+  const inicio=el("input",{type:"date",value:x.inicio||""});
+  const dur=el("input",{type:"number",min:"1",max:"36",value:x.duracaoMeses||""});
+  const semFim=el("input",{type:"checkbox",checked:!!x.id&&!x.duracaoMeses,style:"width:auto;margin-right:6px",onchange:e=>{dur.disabled=e.target.checked;if(e.target.checked)dur.value=""}});
+  const r=regrasDe(x);
+  const reels=el("input",{type:"number",min:"0",value:r.reelsPorMes});
+  const stories=el("input",{type:"number",min:"0",value:r.storiesSeqPorMes});
+  const feed=el("input",{type:"number",min:"0",value:r.feedPorMes});
+  const entreg=el("textarea",{});entreg.value=x.entregaveis||"";
+  const err=el("div",{class:"err",hidden:true});
+  const form=el("form",{},
+    el("label",{class:"f"},"Nome",nome),
+    el("label",{class:"f"},"Cupom de desconto",cupom),
+    el("div",{class:"fields"},
+      el("label",{class:"f",style:"margin-bottom:0"},"Início do contrato",inicio),
+      el("label",{class:"f",style:"margin-bottom:0"},"Duração (meses)",dur)),
+    el("label",{class:"f",style:"margin-top:12px"},el("span",{},semFim,"  Prazo indeterminado")),
+    el("div",{class:"sec"},"Entrega por mês"),
+    el("div",{class:"fields"},
+      el("label",{class:"f",style:"margin-bottom:0"},"Reels",reels),
+      el("label",{class:"f",style:"margin-bottom:0"},"Sequências de Stories",stories),
+      el("label",{class:"f",style:"margin-bottom:0"},"Posts no feed",feed)),
+    el("label",{class:"f",style:"margin-top:12px"},"O que ela precisa entregar (descrição livre)",entreg),
+    err,
+    el("div",{class:"row",style:"margin-top:6px"},
+      el("button",{class:"btn primary",type:"submit"},isNew?"Cadastrar":"Salvar"),
+      el("button",{class:"btn",type:"button",onclick:()=>isNew?closeOverlay():sheetInflu(x.id)},"Cancelar")));
+  form.addEventListener("submit",async e=>{
+    e.preventDefault();
+    if(!nome.value.trim()){err.textContent="Dê um nome.";err.hidden=false;return}
+    const body={nome:nome.value.trim(),cupom:cupom.value.trim(),inicio:inicio.value||"",duracaoMeses:dur.disabled||!dur.value?null:Number(dur.value),entregaveis:entreg.value.trim(),
+      regras:{reelsPorMes:Number(reels.value)||0,storiesSeqPorMes:Number(stories.value)||0,feedPorMes:Number(feed.value)||0},
+      produtos:x.produtos||{},conteudo:x.conteudo||{},compras:x.compras||{},token:x.id||null,atualizadoEm:new Date().toISOString()};
+    try{
+      let id=x.id;
+      if(isNew){id=randToken();body.criadoEm=new Date().toISOString();body.token=id}
+      else body.token=id;
+      await influRef(id).set(body,{merge:!isNew});
+      toast(isNew?"Influenciadora cadastrada":"Ficha salva");closeOverlay();
+    }catch(z){err.textContent="Não deu para salvar. Tente de novo.";err.hidden=false}
+  });
+  scrim(el("div",{},el("div",{class:"sh"},el("h2",{},isNew?"Nova influenciadora":"Editar ficha"),el("button",{class:"close",onclick:closeOverlay},"×")),form));
+  setTimeout(()=>nome.focus(),30);
+}
+function sheetInflu(id){
+  const x=S.infs.find(y=>y.id===id);if(!x){closeOverlay();return}
+  const conf=el("div",{hidden:true,style:"margin-top:10px"},el("p",{class:"muted"},"Apagar esta ficha? O conteúdo e as compras dela também somem."),
+    el("button",{class:"btn danger small",onclick:async()=>{try{await influRef(x.id).delete();closeOverlay();toast("Ficha apagada")}catch(e){toast("Não deu para apagar.")}}},"Apagar"),
+    el("button",{class:"btn small",style:"margin-left:8px",onclick:()=>conf.hidden=true},"Cancelar"));
+  const meses=[];for(let i=0;i<4;i++){const d=new Date(now.getFullYear(),now.getMonth()-i,1);meses.push(ymKey(d))}
+  const meses2=mesesContrato(x);
+  scrim(el("div",{},
+    el("div",{class:"sh"},el("h2",{},x.nome),el("button",{class:"close",onclick:closeOverlay},"×")),
+    el("p",{class:"muted"},contratoTxt(x)+(x.cupom?" · Cupom "+x.cupom:"")),
+    el("div",{class:"sec"},"Link de acesso dela (só ela vê os dados dela)"),
+    el("div",{},el("div",{class:"tokenbox"},linkDe(x)),
+      el("div",{class:"row",style:"margin-top:8px"},
+        el("button",{class:"btn small",type:"button",onclick:()=>copiar(linkDe(x))},"Copiar link"),
+        el("button",{class:"btn small",type:"button",onclick:()=>copiar(x.id)},"Copiar código"))),
+    el("div",{class:"sec"},"Produto recebido por mês"),
+    el("div",{class:"row"},meses.map(ym=>{
+      const v=!!(x.produtos||{})[ym];
+      return el("button",{class:"btn small "+(v?"primary":""),type:"button",style:"flex:1 1 45%",onclick:async()=>{try{const produtos={...(x.produtos||{}),[ym]:!v};await influRef(x.id).update({produtos});toast(!v?"Marcado como recebido":"Desmarcado")}catch(e){toast("Não deu para salvar.")}}},fmtYM(ym)+(v?" ✓":""));
+    })),
+    el("div",{class:"sec"},"Conteúdo postado, por mês do contrato"),
+    el("div",{class:"list"},meses2.map(ym=>{
+      const c=contaMes(x,ym),r=regrasDe(x),pend=pendenteDe(x,ym);
+      return el("div",{class:"li"},el("span",{},fmtYM(ym)+" · "+c.reels+"/"+r.reelsPorMes+" Reels · "+c.stories+"/"+r.storiesSeqPorMes+" Stories"+(r.feedPorMes?" · "+c.feed+"/"+r.feedPorMes+" feed":"")),
+        pend.length?el("span",{class:"pill warn"},"falta "+pend.join(", ")):el("span",{class:"pill ok"},"em dia"));
+    })),
+    el("div",{class:"sec"},"Compras"),
+    comprasAdmin(x),
+    el("div",{class:"sec"},"O que ela precisa entregar"),
+    el("p",{},x.entregaveis||"Não definido."),
+    el("div",{class:"row",style:"margin-top:14px"},
+      el("button",{class:"btn primary",onclick:()=>formInflu(x)},"Editar ficha"),
+      el("button",{class:"btn danger",onclick:()=>conf.hidden=false},"Apagar")),conf));
+}
+function comprasAdmin(x){
+  const cs=(x.compras||[]).slice().sort((a,b)=>(b.data||"").localeCompare(a.data||""));
+  const lista=cs.length?el("div",{class:"list",style:"margin-bottom:10px"},cs.map(c=>el("div",{class:"li"},
+    el("span",{},(c.pedido?c.pedido+" · ":"")+(c.itens||"")+(c.valor?" · R$ "+Number(c.valor).toFixed(2).replace(".",","):"")),
+    el("div",{style:"display:flex;align-items:center;gap:8px"},el("span",{class:"d"},fmtData(c.data)),
+      el("button",{class:"close","aria-label":"Remover",onclick:async()=>{try{const compras=(x.compras||[]).filter(y=>y.id!==c.id);await influRef(x.id).update({compras});toast("Removida")}catch(e){toast("Não deu para remover.")}}},"×"))))):
+    el("div",{class:"empty",style:"padding:16px;margin-bottom:10px"},"Nenhuma compra importada ainda.");
+  return el("div",{},lista,el("button",{class:"btn small",type:"button",onclick:()=>sheetImportarCompras(x)},"⬆ Importar compras"));
+}
+function sheetImportarCompras(x){
+  const txt=el("textarea",{style:"min-height:160px",placeholder:"Cole uma linha por compra, por exemplo:\n12/11/2026 - Pedido 1234 - R$ 199,90 - Legging preta M\n05/11/2026 - Pedido 1198 - R$ 89,90 - Top canelado P"});
+  const err=el("div",{class:"err",hidden:true});
+  const form=el("form",{},
+    el("p",{class:"muted"},"Cole o histórico de pedidos dela, uma compra por linha. Eu procuro a data, o número do pedido e o valor em cada linha."),
+    el("label",{class:"f"},"Compras",txt),err,
+    el("div",{class:"row"},el("button",{class:"btn primary",type:"submit"},"Importar"),el("button",{class:"btn",type:"button",onclick:()=>sheetInflu(x.id)},"Cancelar")));
+  form.addEventListener("submit",async e=>{
+    e.preventDefault();
+    const linhas=txt.value.split("\n").map(l=>l.trim()).filter(Boolean);
+    if(!linhas.length){err.textContent="Cole ao menos uma linha.";err.hidden=false;return}
+    const novas=linhas.map(l=>{
+      const dm=l.match(/(\d{2})\/(\d{2})\/(\d{4})|(\d{4})-(\d{2})-(\d{2})/);
+      const data=dm?(dm[4]?dm[0]:`${dm[3]}-${dm[2]}-${dm[1]}`):"";
+      const vm=l.match(/R?\$?\s*([\d.]+,\d{2})|R?\$?\s*(\d+\.\d{2})/);
+      const valor=vm?Number((vm[1]||vm[2]).replace(/\./g,"").replace(",",".")):null;
+      const pm=l.match(/pedido\s*#?\s*([\w-]+)/i);
+      let itens=l;
+      if(dm)itens=itens.replace(dm[0],"");
+      if(vm)itens=itens.replace(vm[0],"");
+      if(pm)itens=itens.replace(pm[0],"");
+      itens=itens.replace(/^[\s\-·|:]+|[\s\-·|:]+$/g,"").replace(/\s{2,}/g," ").trim();
+      return{id:uid(),data,pedido:pm?"Pedido "+pm[1]:"",valor,itens};
+    });
+    try{
+      const compras=[...(x.compras||[]),...novas];
+      await influRef(x.id).update({compras});
+      toast(plural(novas.length,"compra importada","compras importadas"));sheetInflu(x.id);
+    }catch(z){err.textContent="Não deu para importar.";err.hidden=false}
+  });
+  scrim(el("div",{},el("div",{class:"sh"},el("h2",{},"Importar compras — "+x.nome),el("button",{class:"close",onclick:closeOverlay},"×")),form));
+}
+
+/* ---------------- início ---------------- */
+function lerHash(){S.myTok=(location.hash||"").slice(1)||null;S.myInf=undefined;S.myInfErr=false}
+window.addEventListener("hashchange",()=>{lerHash();render()});
+lerHash();
+render();
+auth.onAuthStateChanged(user=>{
+  S.authReady=true;
+  S.authUser=user;
+  S.isAdmin=!!(user&&user.email&&user.email.toLowerCase().endsWith(ADMIN_DOMAIN));
+  if(S.isAdmin){
+    db.collection("influs").onSnapshot(s=>{S.infs=s.docs.map(d=>({id:d.id,...d.data()}));render()},()=>{});
+    cfgRef.onSnapshot(s=>{S.cfg=s.exists?s.data():{};render()},()=>{});
+  }
+  render();
+});
+cfgRef.onSnapshot(s=>{S.cfg=s.exists?s.data():S.cfg;render()},()=>{});
+</script>
+</body>
+</html>
