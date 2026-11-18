@@ -299,8 +299,17 @@ function contratoTxt(inf){
   return"Contrato de "+fmtData(inf.inicio)+" até "+fmtYM(fim)+" ("+plural(inf.duracaoMeses,"mês","meses")+")";
 }
 function produtoPill(inf,ym){
-  const v=(inf.produtos||{})[ym];
-  return v?el("span",{class:"pill ok"},"✅ Recebido"):el("span",{class:"pill warn"},"⏳ Ainda não chegou");
+  const v=!!(inf.produtos||{})[ym];
+  return el("div",{style:"display:flex;align-items:center;gap:10px;flex-wrap:wrap"},
+    v?el("span",{class:"pill ok"},"✅ Recebido"):el("span",{class:"pill warn"},"⏳ Ainda não chegou"),
+    el("button",{class:"btn small"+(v?"":" primary"),type:"button",onclick:async e=>{
+      const b=e.currentTarget;b.disabled=true;
+      try{
+        const produtos={...(inf.produtos||{}),[ym]:!v};
+        await influRef(inf.id).update({produtos});
+        toast(!v?"Marcado como recebido":"Desmarcado")
+      }catch(x){toast("Não deu para salvar. Tente de novo.");b.disabled=false}
+    }},v?"Desmarcar":"✅ Marcar como recebido"));
 }
 function conteudoSecao(inf,ym,tipo,label,meta,feito,temLink){
   const itens=((inf.conteudo||{})[ym]||{})[tipo]||[];
