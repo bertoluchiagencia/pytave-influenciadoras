@@ -1,0 +1,228 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
+<meta http-equiv="Pragma" content="no-cache">
+<meta http-equiv="Expires" content="0">
+<title>Presentes de fim de ano · Bertoluchi</title>
+<link rel="icon" href="favicon-32.png" sizes="32x32" type="image/png">
+<link rel="icon" href="favicon-256.png" sizes="256x256" type="image/png">
+<link rel="apple-touch-icon" href="apple-touch-icon.png">
+<style>
+:root{
+  color-scheme:light;
+  --bg:#F5F3F0; --card:#FFFFFF; --green:#253A29; --green-2:#33503A; --orange:#AB4709; --orange-dk:#8C3A06; --cream:#F1E3DA; --tint:#F8EDE6;
+  --ink:#20221F; --muted:#6F6862; --line:#E6DFD6;
+  --ok:#2E6B45; --ok-bg:#E2EFE6; --bad:#A8352A; --bad-bg:#F8E0DC; --idle:#6F6862; --idle-bg:#ECE7E2;
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    color-scheme:dark;
+    --bg:#15201A; --card:#1C2A21; --green:#9BC6A4; --green-2:#C7E0CC; --orange:#E79A5C; --orange-dk:#F3B57D; --cream:#2A3A2B; --tint:#22311F;
+    --ink:#F1EEE8; --muted:#A9AFA3; --line:#33433A;
+    --ok:#86C89A; --ok-bg:#1E3324; --bad:#E08F85; --bad-bg:#3A1F1C; --idle:#A9AFA3; --idle-bg:#2A322B;
+  }
+}
+:root[data-theme="dark"]{
+  color-scheme:dark;
+  --bg:#15201A; --card:#1C2A21; --green:#9BC6A4; --green-2:#C7E0CC; --orange:#E79A5C; --orange-dk:#F3B57D; --cream:#2A3A2B; --tint:#22311F;
+  --ink:#F1EEE8; --muted:#A9AFA3; --line:#33433A;
+  --ok:#86C89A; --ok-bg:#1E3324; --bad:#E08F85; --bad-bg:#3A1F1C; --idle:#A9AFA3; --idle-bg:#2A322B;
+}
+*{box-sizing:border-box}
+html{color-scheme:light;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+img{max-width:100%}
+[hidden]{display:none!important}
+body{margin:0;background:var(--bg);color:var(--ink);font-family:"Figtree","Segoe UI",system-ui,sans-serif;font-size:15px;line-height:1.5;padding-bottom:40px}
+h1,h2,h3{font-family:"Urbanist","Avenir Next",system-ui,sans-serif;font-weight:700;letter-spacing:-.01em;text-wrap:balance;margin:0}
+h2{font-size:1.3rem} h3{font-size:1.02rem}
+.muted{color:var(--muted)}
+.wrap{max-width:640px;margin:0 auto;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px))}
+.top{border-bottom:1px solid var(--line);background:var(--cream)}
+.top .wrap{display:flex;flex-wrap:wrap;align-items:center;gap:12px 20px;padding-block:18px}
+.brand{display:flex;align-items:center;gap:10px;flex:1 1 auto;min-width:0}
+.brand .tag{font-family:"Urbanist",sans-serif;font-weight:700;color:var(--ink);font-size:1.05rem}
+main{padding-block:26px 48px}
+.panel{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:20px;margin-bottom:14px}
+.btn{appearance:none;font:inherit;font-weight:600;border:1px solid var(--line);background:var(--card);color:var(--ink);border-radius:9px;padding:10px 16px;cursor:pointer;display:inline-flex;align-items:center;gap:8px;text-decoration:none}
+.btn:hover{border-color:var(--muted)}
+.btn.primary{background:var(--orange);border-color:var(--orange);color:#fff}
+.btn.primary:hover{background:var(--orange-dk);border-color:var(--orange-dk)}
+.btn.small{padding:6px 11px;font-size:.85rem;border-radius:7px}
+.btn:disabled{opacity:.5;cursor:default}
+label.f{display:block;margin-bottom:14px;font-size:.8rem;font-weight:600;color:var(--muted)}
+input,textarea{width:100%;border:1px solid var(--line);border-radius:9px;padding:10px 12px;background:var(--bg);color:var(--ink);font:inherit;margin-top:6px;font-size:14px;font-weight:400}
+input:focus-visible,textarea:focus-visible{outline:2px solid var(--orange);outline-offset:0;border-color:transparent}
+textarea{min-height:80px;resize:vertical}
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:0 14px}
+@media (max-width:420px){.grid2{grid-template-columns:1fr}}
+.err{color:var(--bad);font-size:13px;margin:4px 0 10px}
+.empty{text-align:center;padding:36px 16px;color:var(--muted);border:1px dashed var(--line);border-radius:14px}
+.spin{display:inline-block;width:16px;height:16px;border:2px solid var(--line);border-top-color:var(--orange);border-radius:50%;animation:sp .7s linear infinite}
+@keyframes sp{to{transform:rotate(360deg)}}
+.gbtn{display:inline-flex;align-items:center;gap:10px;background:#fff;color:#1F2E35;border:1px solid var(--line);border-radius:9px;padding:10px 16px;font-weight:600;cursor:pointer;font:inherit}
+.pill{display:inline-flex;align-items:center;gap:6px;border-radius:999px;padding:5px 12px;font-size:12.5px;font-weight:600;white-space:nowrap}
+.pill.ok{background:var(--ok-bg);color:var(--ok)}
+.pill.idle{background:var(--idle-bg);color:var(--idle)}
+.tbl{overflow-x:auto;border:1px solid var(--line);border-radius:12px}
+table{width:100%;border-collapse:collapse;font-size:13.5px;min-width:560px}
+th,td{text-align:left;padding:10px 12px;border-bottom:1px solid var(--line);vertical-align:top}
+th{font-size:11.5px;text-transform:uppercase;letter-spacing:.06em;color:var(--muted);font-weight:600;background:var(--tint)}
+tr:last-child td{border-bottom:none}
+.tokenbox{font-family:ui-monospace,"SFMono-Regular",Menlo,monospace;font-size:12px;background:var(--bg);border:1px solid var(--line);border-radius:8px;padding:7px 9px;word-break:break-all}
+.toast{position:fixed;left:50%;bottom:24px;transform:translateX(-50%);background:var(--ink);color:var(--bg);padding:10px 16px;border-radius:10px;font-size:13px;z-index:99;box-shadow:0 8px 24px rgba(0,0,0,.18)}
+</style>
+</head>
+<body>
+<div id="app"></div>
+
+<script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-auth-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-firestore-compat.js"></script>
+<script>
+/* ---------------- Firebase ---------------- */
+const firebaseConfig = {
+  apiKey: "AIzaSyBttGz16TTL7peZUz17XwfZL9ZoZ0Sv69Y",
+  authDomain: "pytave-influenciadoras.firebaseapp.com",
+  projectId: "pytave-influenciadoras",
+  storageBucket: "pytave-influenciadoras.firebasestorage.app",
+  messagingSenderId: "98863512315",
+  appId: "1:98863512315:web:0309010cf2056d44210e5e"
+};
+firebase.initializeApp(firebaseConfig);
+const auth = firebase.auth();
+const db = firebase.firestore();
+const ADMIN_DOMAIN = "@bertoluchiagencia.com.br";
+const PAGE_URL = "https://bertoluchiagencia.github.io/pytave-influenciadoras/presentes.html";
+
+/* ---------------- quem pode responder (nome + id fixo) ---------------- */
+const PESSOAS = [
+  {id:"87456338", nome:"Natalia Sidekerskis"},
+  {id:"118144699", nome:"Júlia Brocolleli"},
+  {id:"54949412", nome:"Raissa de Souza Jesus"},
+  {id:"118144477", nome:"Damaris"},
+  {id:"112000076", nome:"Bárbara Vilella"},
+  {id:"94120972", nome:"Cibele Loiola"},
+  {id:"82194688", nome:"Ilana"},
+  {id:"118200001", nome:"Sophia Klein"}
+];
+
+/* ---------------- helpers ---------------- */
+const el=(tag,attrs,...kids)=>{const e=document.createElement(tag);for(const[k,v]of Object.entries(attrs||{})){if(v===null||v===undefined||v===false)continue;if(k==="class")e.className=v;else if(k==="html")e.innerHTML=v;else if(k==="value")e.value=v;else if(k.startsWith("on"))e.addEventListener(k.slice(2),v);else e.setAttribute(k,v===true?"":v)}for(const k of kids.flat()){if(k==null||k===false)continue;e.append(k.nodeType?k:document.createTextNode(String(k)))}return e};
+const $=s=>document.querySelector(s);
+const root=$("#app");
+function toast(msg){const t=el("div",{class:"toast"},msg);document.body.append(t);setTimeout(()=>t.remove(),2600)}
+function tokenFromHash(){const h=location.hash.replace(/^#/,"").trim();return h||null}
+function presRef(tok){return db.collection("presentes").doc(String(tok))}
+let S={authReady:false,authUser:null,isAdmin:false,resp:null,respReady:false};
+
+function render(){
+  root.replaceChildren();
+  root.append(
+    el("header",{class:"top"},el("div",{class:"wrap"},el("div",{class:"brand"},el("span",{},"🎁"),el("span",{class:"tag"},"Bertoluchi · Presentes de fim de ano")),
+      S.isAdmin?el("button",{class:"btn small",onclick:()=>auth.signOut()},"Sair"):null)),
+    el("main",{class:"wrap"},body()));
+}
+function body(){
+  if(!S.authReady)return el("div",{class:"empty"},el("span",{class:"spin"}),el("div",{style:"margin-top:10px"},"Carregando…"));
+  const tok=tokenFromHash();
+  if(tok)return publicView(tok);
+  if(S.isAdmin)return adminView();
+  return loginView();
+}
+
+/* ---------------- visão pública (colaboradora) ---------------- */
+function carregarResposta(tok){
+  presRef(tok).get().then(snap=>{S.resp=snap.exists?snap.data():{};S.respReady=true;render()}).catch(()=>{S.resp={};S.respReady=true;render()});
+}
+function publicView(tok){
+  const pessoa=PESSOAS.find(p=>p.id===tok);
+  if(!pessoa)return el("div",{class:"empty"},"Esse link não é válido. Peça para a Beatriz te mandar o link certo.");
+  if(!S.respReady){carregarResposta(tok);return el("div",{class:"empty"},el("span",{class:"spin"}),el("div",{style:"margin-top:10px"},"Carregando…"))}
+  const cur=S.resp||{};
+  const roupa=el("input",{value:cur.tamanhoRoupa||"",placeholder:"Ex.: P, M, G ou 38, 40..."});
+  const sapato=el("input",{value:cur.tamanhoSapato||"",placeholder:"Ex.: 36, 37, 38..."});
+  const ideias=el("textarea",{placeholder:"Marca, cor, loja, link... o que mais ajudar a gente a acertar no seu presente."});
+  ideias.value=cur.presente||"";
+  const err=el("div",{class:"err",hidden:true});
+  const form=el("form",{},
+    el("div",{class:"grid2"},
+      el("label",{class:"f"},"Tamanho de roupa",roupa),
+      el("label",{class:"f"},"Tamanho de sapato",sapato)),
+    el("label",{class:"f"},"Outras ideias de presente",ideias),
+    err,
+    el("button",{class:"btn primary",type:"submit"},cur.respondidoEm?"Atualizar resposta":"Enviar"));
+  form.addEventListener("submit",async e=>{
+    e.preventDefault();
+    const tr=roupa.value.trim(),ts=sapato.value.trim(),ti=ideias.value.trim();
+    if(!tr&&!ts&&!ti){err.textContent="Preencha pelo menos um campo antes de enviar.";err.hidden=false;return}
+    const btn=form.querySelector("button[type=submit]");btn.disabled=true;err.hidden=true;
+    try{
+      await presRef(tok).set({nome:pessoa.nome,tamanhoRoupa:tr,tamanhoSapato:ts,presente:ti,respondidoEm:new Date().toISOString()},{merge:true});
+      S.resp={nome:pessoa.nome,tamanhoRoupa:tr,tamanhoSapato:ts,presente:ti,respondidoEm:new Date().toISOString()};
+      toast("Enviado! Obrigada 💛");render();
+    }catch(x){err.textContent="Não deu para enviar. Tente de novo em alguns segundos.";err.hidden=false;btn.disabled=false}
+  });
+  return el("div",{class:"panel"},
+    el("h2",{},"Oi, "+pessoa.nome.split(" ")[0]+"! 🎁"),
+    el("p",{class:"muted",style:"margin-top:6px;margin-bottom:16px"},"É hora da gente pensar no seu presente de fim de ano. Me conta seu tamanho de roupa, de sapato, e qualquer ideia que ajude a gente a acertar."),
+    form);
+}
+
+/* ---------------- login equipe ---------------- */
+function entrarComoEquipe(){
+  const prov=new firebase.auth.GoogleAuthProvider();
+  prov.setCustomParameters({hd:"bertoluchiagencia.com.br"});
+  auth.signInWithPopup(prov).catch(e=>{
+    if(e.code!=="auth/popup-closed-by-user")toast("Não foi possível entrar: "+(e.message||e.code))
+  });
+}
+function loginView(){
+  return el("div",{class:"panel",style:"max-width:420px;margin:40px auto;text-align:center"},
+    el("h3",{style:"margin-bottom:4px"},"Área da Beatriz"),
+    el("p",{class:"muted",style:"margin-bottom:18px"},"Entre com o Google da agência para ver as respostas e pegar os links de cada colaboradora."),
+    el("button",{class:"gbtn",onclick:entrarComoEquipe},"Entrar com o Google"));
+}
+
+/* ---------------- visão admin (Beatriz) ---------------- */
+let ADMIN_DATA=null,ADMIN_READY=false;
+function carregarTudo(){
+  db.collection("presentes").get().then(snap=>{
+    ADMIN_DATA={};snap.forEach(d=>ADMIN_DATA[d.id]=d.data());ADMIN_READY=true;render();
+  }).catch(()=>{ADMIN_DATA={};ADMIN_READY=true;render()});
+}
+function copiar(txt){navigator.clipboard.writeText(txt).then(()=>toast("Link copiado"),()=>toast("Não deu para copiar"))}
+function adminView(){
+  if(!ADMIN_READY){carregarTudo();return el("div",{class:"empty"},el("span",{class:"spin"}),el("div",{style:"margin-top:10px"},"Carregando…"))}
+  const faltam=PESSOAS.filter(p=>!(ADMIN_DATA[p.id]&&(ADMIN_DATA[p.id].tamanhoRoupa||ADMIN_DATA[p.id].tamanhoSapato||ADMIN_DATA[p.id].presente)));
+  const tb=el("tbody",{},PESSOAS.map(p=>{
+    const r=ADMIN_DATA[p.id]||{};
+    const respondeu=!!(r.tamanhoRoupa||r.tamanhoSapato||r.presente);
+    const link=PAGE_URL+"#"+p.id;
+    return el("tr",{},
+      el("td",{},p.nome),
+      el("td",{},respondeu?el("span",{class:"pill ok"},"Respondeu"):el("span",{class:"pill idle"},"Falta responder")),
+      el("td",{},r.tamanhoRoupa||"—"),
+      el("td",{},r.tamanhoSapato||"—"),
+      el("td",{},r.presente||"—"),
+      el("td",{},el("button",{class:"btn small",type:"button",onclick:()=>copiar(link)},"🔗 Copiar link")));
+  }));
+  return el("div",{},
+    el("div",{class:"panel"},
+      el("h2",{style:"margin-bottom:6px"},"Respostas"),
+      el("p",{class:"muted",style:"margin-bottom:0"},faltam.length?("Ainda falta responder: "+faltam.map(p=>p.nome).join(", ")+"."):"Todo mundo já respondeu! 🎉")),
+    el("div",{class:"tbl"},el("table",{},el("thead",{},el("tr",{},el("th",{},"Colaboradora"),el("th",{},"Status"),el("th",{},"Roupa"),el("th",{},"Sapato"),el("th",{},"Ideias"),el("th",{},"Link"))),tb)));
+}
+
+auth.onAuthStateChanged(user=>{
+  S.authReady=true;S.authUser=user;
+  S.isAdmin=!!(user&&user.email&&user.email.toLowerCase().endsWith(ADMIN_DOMAIN));
+  render();
+});
+window.addEventListener("hashchange",render);
+render();
+</script>
+</body>
+</html>
