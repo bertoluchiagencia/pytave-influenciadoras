@@ -139,9 +139,9 @@ function carregarResposta(tok){
   presRef(tok).get().then(snap=>{S.resp=snap.exists?snap.data():{};S.respReady=true;render()}).catch(()=>{S.resp={};S.respReady=true;render()});
 }
 function publicView(tok){
-  const pessoa=PESSOAS.find(p=>p.id===tok);
+  const pessoa=PESSOAS.find(p=>p.id===tok)||PESSOAS.find(p=>tok.indexOf(p.id)===0);
   if(!pessoa)return el("div",{class:"empty"},"Esse link não é válido. Peça para a Beatriz te mandar o link certo.");
-  if(!S.respReady){carregarResposta(tok);return el("div",{class:"empty"},el("span",{class:"spin"}),el("div",{style:"margin-top:10px"},"Carregando…"))}
+  if(!S.respReady){carregarResposta(pessoa.id);return el("div",{class:"empty"},el("span",{class:"spin"}),el("div",{style:"margin-top:10px"},"Carregando…"))}
   const cur=S.resp||{};
   const roupa=el("input",{value:cur.tamanhoRoupa||"",placeholder:"Ex.: P, M, G ou 38, 40..."});
   const sapato=el("input",{value:cur.tamanhoSapato||"",placeholder:"Ex.: 36, 37, 38..."});
@@ -161,7 +161,7 @@ function publicView(tok){
     if(!tr&&!ts&&!ti){err.textContent="Preencha pelo menos um campo antes de enviar.";err.hidden=false;return}
     const btn=form.querySelector("button[type=submit]");btn.disabled=true;err.hidden=true;
     try{
-      await presRef(tok).set({nome:pessoa.nome,tamanhoRoupa:tr,tamanhoSapato:ts,presente:ti,respondidoEm:new Date().toISOString()},{merge:true});
+      await presRef(pessoa.id).set({nome:pessoa.nome,tamanhoRoupa:tr,tamanhoSapato:ts,presente:ti,respondidoEm:new Date().toISOString()},{merge:true});
       S.resp={nome:pessoa.nome,tamanhoRoupa:tr,tamanhoSapato:ts,presente:ti,respondidoEm:new Date().toISOString()};
       toast("Enviado! Obrigada 💛");render();
     }catch(x){err.textContent="Não deu para enviar. Tente de novo em alguns segundos.";err.hidden=false;btn.disabled=false}
