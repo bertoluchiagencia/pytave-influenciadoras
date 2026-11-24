@@ -40,6 +40,7 @@ h1,h2,h3{font-family:"Urbanist","Avenir Next",system-ui,sans-serif;font-weight:7
 h2{font-size:1.3rem} h3{font-size:1.02rem}
 .muted{color:var(--muted)}
 .wrap{max-width:640px;margin:0 auto;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px))}
+.wrap.wide{max-width:1180px}
 .top{border-bottom:1px solid var(--line);background:var(--cream)}
 .top .wrap{display:flex;flex-wrap:wrap;align-items:center;gap:12px 20px;padding-block:18px}
 .brand{display:flex;align-items:center;gap:10px;flex:1 1 auto;min-width:0}
@@ -124,7 +125,7 @@ function render(){
   root.append(
     el("header",{class:"top"},el("div",{class:"wrap"},el("div",{class:"brand"},el("span",{},"🎁"),el("span",{class:"tag"},"Bertoluchi · Presentes de fim de ano")),
       S.isAdmin?el("button",{class:"btn small",onclick:()=>auth.signOut()},"Sair"):null)),
-    el("main",{class:"wrap"},body()));
+    el("main",{class:S.isAdmin&&!tokenFromHash()?"wrap wide":"wrap"},body()));
 }
 function body(){
   if(!S.authReady)return el("div",{class:"empty"},el("span",{class:"spin"}),el("div",{style:"margin-top:10px"},"Carregando…"));
@@ -214,7 +215,10 @@ function adminView(){
     el("div",{class:"panel"},
       el("h2",{style:"margin-bottom:6px"},"Respostas"),
       el("p",{class:"muted",style:"margin-bottom:0"},faltam.length?("Ainda falta responder: "+faltam.map(p=>p.nome).join(", ")+"."):"Todo mundo já respondeu! 🎉")),
-    el("div",{class:"tbl"},el("table",{},el("thead",{},el("tr",{},el("th",{},"Colaboradora"),el("th",{},"Status"),el("th",{},"Roupa"),el("th",{},"Sapato"),el("th",{},"Ideias"),el("th",{},"Link"))),tb)));
+    el("div",{class:"tbl"},el("table",{},
+      el("colgroup",{},
+        el("col",{style:"width:14%"}),el("col",{style:"width:10%"}),el("col",{style:"width:12%"}),el("col",{style:"width:9%"}),el("col",{style:"width:43%"}),el("col",{style:"width:12%"})),
+      el("thead",{},el("tr",{},el("th",{},"Colaboradora"),el("th",{},"Status"),el("th",{},"Roupa"),el("th",{},"Sapato"),el("th",{},"Ideias"),el("th",{},"Link"))),tb)));
 }
 
 auth.onAuthStateChanged(user=>{
