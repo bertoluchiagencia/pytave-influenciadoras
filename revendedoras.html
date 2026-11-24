@@ -190,7 +190,7 @@ function copiar(txt){navigator.clipboard.writeText(txt).then(()=>toast("Copiado"
 let S={authReady:false,authUser:null,isAdmin:false,
   revs:[],revsReady:false, cfg:{comissao:null},
   myTok:null, myRev:undefined, myRevErr:false,
-  notas:[],vendas:[],pagamentos:{}, dataReady:{notas:false,vendas:false,pag:false},
+  notas:[],vendas:[],gastos:[],pagamentos:{}, dataReady:{notas:false,vendas:false,gastos:false,pag:false},
   view:"resumo", preview:false};
 
 function revRef(tok){return db.collection("revendedoras").doc(tok)}
@@ -198,6 +198,7 @@ const cfgRef=db.collection("revConfig").doc("geral");
 
 /* ---------------- cálculos ---------------- */
 function vendasDe(mes){ return S.vendas.filter(v=>!mes||(v.data||"").slice(0,7)===mes).sort((a,b)=>(b.data||"").localeCompare(a.data||"")||(b.criadoEm||0)-(a.criadoEm||0)); }
+function gastosDe(mes){ return S.gastos.filter(g=>!mes||(g.data||"").slice(0,7)===mes).sort((a,b)=>(b.data||"").localeCompare(a.data||"")||(b.criadoEm||0)-(a.criadoEm||0)); }
 function estoque(){
   const vendidos={};
   for(const v of S.vendas) if(v.itemKey) vendidos[v.itemKey]=(vendidos[v.itemKey]||0)+1;
@@ -212,7 +213,13 @@ function estoque(){
 function comissaoMes(mes){
   const pago=S.pagamentos[mes]; const pct=pago?.comissao??S.cfg.comissao;
   const vs=vendasDe(mes); const total=vs.reduce((s,v)=>s+(Number(v.valor)||0),0);
-  return {vs,total,pct,due:pct==null?null:Math.round(total*pct)/100,pago};
+  const due=pct==null?null:Math.round(total*pct)/100;
+  const gs=gastosDe(mes); const gastosTotal=gs.reduce((s,g)=>s+(Number(g.valor)||0),0);
+  const porPg={}; for(const v of vs) porPg[v.pagamento]=(porPg[v.pagamento]||0)+(Number(v.valor)||0);
+  const dinheiro=porPg["Dinheiro"]||0;
+  const totalPagar=(due??0)+gastosTotal; // comissão + gastos, antes de abater o dinheiro que ela já ficou
+  const totalFinal=Math.round((totalPagar-dinheiro)*100)/100; // >0: Pytave paga pra ela · <0: ela repassa a diferença
+  return {vs,total,pct,due,pago,gs,gastosTotal,porPg,dinheiro,totalPagar,totalFinal};
 }
 const itemLabel=r=>`${r.peca}${r.tamanho?" · "+r.tamanho:""}`;
 
@@ -243,7 +250,7 @@ function entrarComoEquipe(){
 
 /* ---------------- carregar revendedora (por token) ---------------- */
 let unsubs=[];
-function pararEscutas(){ unsubs.forEach(u=>u()); unsubs=[]; S.dataReady={notas:false,vendas:false,pag:false}; S.notas=[]; S.vendas=[]; S.pagamentos={}; }
+function pararEscutas(){ unsubs.forEach(u=>u()); unsubs=[]; S.dataReady={notas:false,vendas:false,gastos:false,pag:false}; S.notas=[]; S.vendas=[]; S.gastos=[]; S.pagamentos={}; }
 function carregarRevendedora(tok){
   pararEscutas();
   revRef(tok).get().then(snap=>{
@@ -252,6 +259,7 @@ function carregarRevendedora(tok){
     unsubs.push(revRef(tok).onSnapshot(s=>{ if(s.exists){S.myRev={id:s.id,...s.data()};render()} }));
     unsubs.push(revRef(tok).collection("notas").onSnapshot(s=>{S.notas=s.docs.map(d=>({id:d.id,...d.data()}));S.dataReady.notas=true;render()},()=>{}));
     unsubs.push(revRef(tok).collection("vendas").onSnapshot(s=>{S.vendas=s.docs.map(d=>({id:d.id,...d.data()}));S.dataReady.vendas=true;render()},()=>{}));
+    unsubs.push(revRef(tok).collection("gastos").onSnapshot(s=>{S.gastos=s.docs.map(d=>({id:d.id,...d.data()}));S.dataReady.gastos=true;render()},()=>{}));
     unsubs.push(revRef(tok).collection("pagamentos").onSnapshot(s=>{S.pagamentos=Object.fromEntries(s.docs.map(d=>[d.id,d.data()]));S.dataReady.pag=true;render()},()=>{}));
     render();
   }).catch(()=>{S.myRevErr=true;S.myRev=null;render()});
@@ -269,7 +277,7 @@ function render(){
 }
 function tabsNav(){
   if(!S.myTok || S.myRev===undefined || !S.myRev) return null;
-  const abas=[["resumo","Resumo"],["estoque","Estoque e notas"],["vendas","Registrar vendas"],["relatorio","Relatório do mês"]];
+  const abas=[["resumo","Resumo"],["estoque","Estoque e notas"],["vendas","Vendas e gastos"],["relatorio","Relatório do mês"]];
   return el("nav",{class:"tabs"},abas.map(([k,l])=>el("a",{class:S.view===k?"on":"",onclick:()=>{S.view=k;render()}},l)));
 }
 function body(){
@@ -311,6 +319,7 @@ function viewResumo(){
     ["Vendas no mês",c.vs.length,"peças vendidas"],
     ["Vendido no mês",brl(c.total),"soma das vendas"],
     ["Comissão do mês",c.due==null?"—":brl(c.due),c.pct==null?"defina a % em Relatório":`${String(c.pct).replace(".",",")}% sobre as vendas`,true],
+    ["Gastos do mês",brl(c.gastosTotal),c.gs.length?`${c.gs.length} gasto(s) a reembolsar`:"nenhum gasto registrado"],
   ];
   const last=vendasDe().slice(0,6);
   const low=es.filter(r=>r.resta<=1).sort((a,b)=>a.resta-b.resta).slice(0,8);
@@ -483,17 +492,63 @@ function viewVendas(){
     listaDiv.replaceChildren(el("div",{class:"tw"},el("table",{},thead,tbody,tfoot)));
   }
   renderLista();
+
+  /* ---- novo gasto ---- */
+  const gDesc=el("input",{placeholder:"Ex.: frete, embalagem, sacolinha",required:true});
+  const gValor=el("input",{inputmode:"decimal",placeholder:"0,00",required:true});
+  const gData=el("input",{type:"date",value:today,required:true});
+  const gErr=el("div",{class:"err",hidden:true});
+  const gBtn=el("button",{class:"btn primary",type:"submit"},"Registrar gasto");
+  const gForm=el("form",{},
+    el("div",{class:"fields"},el("label",{class:"f span2"},el("span",{},"Descrição do gasto"),gDesc),el("label",{class:"f"},el("span",{},"Valor (R$)"),gValor)),
+    el("label",{class:"f"},el("span",{},"Data"),gData),
+    gErr,el("div",{class:"row"},gBtn));
+  gForm.addEventListener("submit",async e=>{
+    e.preventDefault();
+    const desc=gDesc.value.trim(); if(!desc){gErr.textContent="Descreva o gasto.";gErr.hidden=false;return}
+    const v=parseValor(gValor.value); if(!(v>0)){gErr.textContent="Informe o valor do gasto, por exemplo 25,00.";gErr.hidden=false;return}
+    gErr.hidden=true; gBtn.disabled=true;
+    try{
+      await revRef(S.myTok).collection("gastos").doc(uid()+Date.now().toString(36)).set({
+        descricao:desc, valor:v, data:gData.value||today, criadoEm:Date.now()});
+      toast(`Gasto registrado: ${desc} · ${brl(v)}`);
+      gDesc.value="";gValor.value="";
+    }catch(x){writeError(x)}
+    gBtn.disabled=false;
+  });
+  const gMesIn=el("input",{type:"month",value:thisMonth,onchange:()=>{renderGastos()}});
+  const gastosDiv=el("div",{});
+  function renderGastos(){
+    const gs=gastosDe(gMesIn.value||thisMonth);
+    if(!gs.length){ gastosDiv.replaceChildren(el("div",{class:"empty"},`Nenhum gasto em ${mesNome(gMesIn.value||thisMonth)}.`)); return; }
+    const thead=el("thead",{},el("tr",{},["Data","Descrição","Valor",""].map((h,i)=>el("th",{class:i===2?"r":""},h))));
+    const tbody=el("tbody",{},gs.map(g=>el("tr",{},
+      el("td",{class:"num"},dataBR(g.data)),
+      el("td",{},g.descricao),
+      el("td",{class:"r num"},brl(g.valor)),
+      el("td",{},S.isAdmin?el("button",{class:"btn small danger",type:"button",onclick:()=>excluirGasto(g.id)},"×"):null))));
+    const total=gs.reduce((s,g)=>s+(+g.valor||0),0);
+    const tfoot=el("tfoot",{},el("tr",{},el("td",{colspan:"2"},`${gs.length} gasto(s)`),el("td",{class:"r num"},brl(total)),el("td",{})));
+    gastosDiv.replaceChildren(el("div",{class:"tw"},el("table",{},thead,tbody,tfoot)));
+  }
+  renderGastos();
+
   return el("div",{class:"view"},
     el("div",{class:"panel"},el("h2",{},"Nova venda"),form),
-    el("div",{class:"panel"},el("div",{class:"panel-head"},el("h2",{},"Vendas do mês"),el("label",{class:"f",style:"width:170px"},el("span",{},"Mês"),mesIn)),listaDiv));
+    el("div",{class:"panel"},el("div",{class:"panel-head"},el("h2",{},"Vendas do mês"),el("label",{class:"f",style:"width:170px"},el("span",{},"Mês"),mesIn)),listaDiv),
+    el("div",{class:"panel"},el("h2",{},"Novo gasto"),el("p",{class:"muted",style:"margin-top:-6px"},"Gastos que você teve (frete, embalagem etc.) — entram junto com a comissão no relatório final."),gForm),
+    el("div",{class:"panel"},el("div",{class:"panel-head"},el("h2",{},"Gastos do mês"),el("label",{class:"f",style:"width:170px"},el("span",{},"Mês"),gMesIn)),gastosDiv));
+}
+async function excluirGasto(id){
+  if(!confirm("Excluir este gasto?"))return;
+  try{ await revRef(S.myTok).collection("gastos").doc(id).delete(); toast("Gasto excluído."); }catch(e){writeError(e)}
 }
 function viewRelatorio(){
   const mesIn=el("input",{type:"month",value:thisMonth});
   const box=el("div",{});
   function r(){
     const mes=mesIn.value||thisMonth; const c=comissaoMes(mes);
-    const porPg={}; for(const v of c.vs) porPg[v.pagamento]=(porPg[v.pagamento]||0)+(+v.valor||0);
-    const max=Math.max(1,...Object.values(porPg));
+    const max=Math.max(1,...Object.values(c.porPg),1);
     const vs=[...c.vs].reverse();
     box.replaceChildren(
       el("div",{class:"panel-head"},el("h2",{},`Relatório de ${S.myRev.nome}`),el("label",{class:"f",style:"width:170px"},el("span",{},"Mês"),mesIn)),
@@ -502,6 +557,7 @@ function viewRelatorio(){
           el("span",{class:"eyebrow"},"Comissão a pagar"),
           el("div",{class:"big-due num"},c.due==null?"—":brl(c.due)),
           el("div",{class:"muted"},c.pct==null?"Defina a porcentagem de comissão em Ajustes.":`${c.vs.length} venda(s) em ${mesNome(mes)} · total vendido ${brl(c.total)} × ${String(c.pct).replace(".",",")}%`),
+          c.gastosTotal>0?el("div",{class:"row",style:"margin-top:4px"},el("span",{class:"muted"},`+ ${brl(c.gastosTotal)} de gastos (${c.gs.length})`)):null,
           el("div",{class:"row"},c.pago?el("span",{class:"pill ok"},`Comissão paga em ${dataBR(c.pago.pagoEm)}`):(c.vs.length?el("span",{class:"pill warn"},"Pagamento pendente"):el("span",{class:"pill neutral"},"Sem vendas no mês"))),
           el("div",{class:"row"},
             el("button",{class:"btn primary",type:"button",onclick:()=>baixarCSV(mes,c)},"Baixar planilha (CSV)"),
@@ -509,12 +565,30 @@ function viewRelatorio(){
             el("button",{class:"btn",type:"button",onclick:()=>copiarResumo(mes,c)},"Copiar resumo")),
           S.isAdmin&&c.vs.length?el("div",{class:"row"},el("button",{class:"btn",type:"button",onclick:()=>marcarPago(mes,c)},c.pago?"Desfazer: marcar como pendente":"Marcar comissão como paga")):null),
         el("div",{class:"panel"},el("h3",{},"Por forma de pagamento"),
-          c.vs.length?el("div",{class:"bars"},Object.entries(porPg).sort((a,b)=>b[1]-a[1]).map(([k,v])=>el("div",{class:"bar"},el("span",{},k),el("span",{class:"track"},el("i",{style:`width:${(v/max*100).toFixed(1)}%`})),el("span",{class:"num"},brl(v))))):el("div",{class:"empty"},"Sem vendas no período."))),
+          c.vs.length?el("div",{class:"bars"},Object.entries(c.porPg).sort((a,b)=>b[1]-a[1]).map(([k,v])=>el("div",{class:"bar"},el("span",{},k+(k==="Dinheiro"?" (com ela)":"")),el("span",{class:"track"},el("i",{style:`width:${(v/max*100).toFixed(1)}%`})),el("span",{class:"num"},brl(v))))):el("div",{class:"empty"},"Sem vendas no período."))),
+      el("div",{class:"panel"},
+        el("h3",{},"Acerto do mês"),
+        el("p",{class:"muted",style:"margin-top:-6px"},"O que ela já ficou em dinheiro abate do que você precisa transferir pra ela."),
+        el("div",{class:"tw"},el("table",{},
+          el("tbody",{},
+            el("tr",{},el("td",{},"Comissão sobre as vendas"),el("td",{class:"r num"},c.due==null?"—":brl(c.due))),
+            el("tr",{},el("td",{},`+ Gastos a reembolsar (${c.gs.length})`),el("td",{class:"r num"},brl(c.gastosTotal))),
+            el("tr",{},el("td",{},"− Dinheiro que ela recebeu"),el("td",{class:"r num"},"− "+brl(c.dinheiro))),
+          ),
+          el("tfoot",{},el("tr",{},
+            el("td",{},c.totalFinal>=0?"= Você transfere pra ela":"= Ela te repassa a diferença"),
+            el("td",{class:"r num",style:`color:${c.totalFinal>=0?"var(--accent)":"var(--danger,#B9584A)"}`},brl(Math.abs(c.totalFinal))))))),
+        el("p",{class:"muted",style:"margin-top:8px"},`Pix e cartão (${brl((c.porPg["Pix"]||0)+(c.porPg["Cartão de crédito"]||0)+(c.porPg["Cartão de débito"]||0)+(c.porPg["Outro"]||0))}) caem direto pra Pytave — não entram nesse abatimento.`)),
       el("div",{class:"panel"},el("h3",{},"Vendas do período"),
         vs.length?el("div",{class:"tw"},el("table",{},
           el("thead",{},el("tr",{},["Data","Peça","Cliente","Pagamento","Valor","Comissão"].map((h,i)=>el("th",{class:i>=4?"r":""},h)))),
           el("tbody",{},vs.map(v=>el("tr",{},el("td",{class:"num"},dataBR(v.data)),el("td",{},v.peca),el("td",{},v.cliente),el("td",{},pgTxt(v)),el("td",{class:"r num"},brl(v.valor)),el("td",{class:"r num"},c.pct==null?"—":brl((+v.valor||0)*c.pct/100))))),
           el("tfoot",{},el("tr",{},el("td",{colspan:"4"},"Total"),el("td",{class:"r num"},brl(c.total)),el("td",{class:"r num"},c.due==null?"—":brl(c.due)))))):el("div",{class:"empty"},`Nenhuma venda de ${S.myRev.nome} em ${mesNome(mes)}.`)),
+      el("div",{class:"panel"},el("h3",{},"Gastos do período"),
+        c.gs.length?el("div",{class:"tw"},el("table",{},
+          el("thead",{},el("tr",{},["Data","Descrição","Valor"].map((h,i)=>el("th",{class:i===2?"r":""},h)))),
+          el("tbody",{},c.gs.map(g=>el("tr",{},el("td",{class:"num"},dataBR(g.data)),el("td",{},g.descricao),el("td",{class:"r num"},brl(g.valor))))),
+          el("tfoot",{},el("tr",{},el("td",{colspan:"2"},"Total"),el("td",{class:"r num"},brl(c.gastosTotal)))))):el("div",{class:"empty"},`Nenhum gasto de ${S.myRev.nome} em ${mesNome(mes)}.`)),
       S.isAdmin?painelAjustes():null);
   }
   mesIn.addEventListener("change",r); r();
@@ -548,26 +622,48 @@ function baixarCSV(mes,d){
   const q=s=>`"${String(s??"").replace(/"/g,'""')}"`; const n=v=>(+v||0).toFixed(2).replace(".",",");
   const linhas=[["Data","Peça","Cliente","Pagamento","Valor","Comissão"].join(";"),
     ...[...d.vs].reverse().map(v=>[dataBR(v.data),q(v.peca),q(v.cliente),q(pgTxt(v)),n(v.valor),d.pct==null?"":n((+v.valor||0)*d.pct/100)].join(";")),
-    ["","","","Total",n(d.total),d.due==null?"":n(d.due)].join(";")];
+    ["","","","Total",n(d.total),d.due==null?"":n(d.due)].join(";"),
+    [""].join(";"),
+    ["Data","Gasto","","","Valor",""].join(";"),
+    ...[...d.gs].reverse().map(g=>[dataBR(g.data),q(g.descricao),"","",n(g.valor),""].join(";")),
+    ["","","","Total gastos",n(d.gastosTotal),""].join(";"),
+    [""].join(";"),
+    ["Por forma de pagamento",""].join(";"),
+    ...Object.entries(d.porPg).map(([k,v])=>[q(k),n(v)].join(";")),
+    [""].join(";"),
+    ["Comissão sobre as vendas","",n(d.due??0)].join(";"),
+    ["+ Gastos a reembolsar","",n(d.gastosTotal)].join(";"),
+    ["− Dinheiro que ela já recebeu","",n(-d.dinheiro)].join(";"),
+    [d.totalFinal>=0?"TOTAL: VOCÊ TRANSFERE PRA ELA":"TOTAL: ELA TE REPASSA A DIFERENÇA","",n(Math.abs(d.totalFinal))].join(";")];
   baixarArquivo(`comissao-${slug(S.myRev.nome)}-${mes}.csv`, new Blob(["﻿"+linhas.join("\r\n")],{type:"text/csv"}));
 }
 function baixarHTML(mes,d){
-  const porPg={}; for(const v of d.vs) porPg[v.pagamento]=(porPg[v.pagamento]||0)+(+v.valor||0);
+  const gastosHtml=d.gs.length?`<table><thead><tr><th>Data</th><th>Gasto</th><th class="r">Valor</th></tr></thead><tbody>${[...d.gs].reverse().map(g=>`<tr><td>${dataBR(g.data)}</td><td>${g.descricao}</td><td class="r">${brl(g.valor)}</td></tr>`).join("")}</tbody></table>`:"<p>Nenhum gasto no período.</p>";
   const html=`<!doctype html><html lang="pt-BR"><meta charset="utf-8"><title>Comissão ${S.myRev.nome} - ${mesNome(mes)}</title>
-<style>body{font-family:system-ui,sans-serif;color:#1F2E35;max-width:760px;margin:32px auto;padding:0 16px}table{border-collapse:collapse;width:100%;margin-top:16px}th,td{border-bottom:1px solid #E8DEE2;padding:7px 8px;text-align:left;font-size:14px}td.r,th.r{text-align:right}.due{font-size:28px;color:#B9584A;font-weight:700}.box{border:1px solid #E8DEE2;border-radius:8px;padding:14px;margin-top:16px}</style>
+<style>body{font-family:system-ui,sans-serif;color:#1F2E35;max-width:760px;margin:32px auto;padding:0 16px}table{border-collapse:collapse;width:100%;margin-top:16px}th,td{border-bottom:1px solid #E8DEE2;padding:7px 8px;text-align:left;font-size:14px}td.r,th.r{text-align:right}.due{font-size:28px;color:#B9584A;font-weight:700}.total{font-size:22px;color:#4A7385;font-weight:700}.box{border:1px solid #E8DEE2;border-radius:8px;padding:14px;margin-top:16px}h2{margin-top:28px;font-size:16px}.acerto td{padding:6px 0;border:none}.acerto td.r{text-align:right}.acerto tr.tot td{border-top:2px solid #1F2E35;font-weight:700;padding-top:10px}</style>
 <h1>Pytave Fitness · Relatório de comissão</h1><p>Revendedora: <b>${S.myRev.nome}</b> · Período: <b>${mesNome(mes)}</b></p>
-<div class="box"><div>Total vendido: <b>${brl(d.total)}</b> em ${d.vs.length} venda(s)</div><div class="due">A pagar: ${d.due==null?"—":brl(d.due)}</div></div>
-<div class="box"><b>Por forma de pagamento</b>${Object.entries(porPg).map(([k,v])=>`<div>${k}: ${brl(v)}</div>`).join("")||"<div>—</div>"}</div>
-<table><thead><tr><th>Data</th><th>Peça</th><th>Cliente</th><th>Pagamento</th><th class="r">Valor</th></tr></thead><tbody>${[...d.vs].reverse().map(v=>`<tr><td>${dataBR(v.data)}</td><td>${v.peca}</td><td>${v.cliente}</td><td>${pgTxt(v)}</td><td class="r">${brl(v.valor)}</td></tr>`).join("")}</tbody></table></html>`;
+<div class="box"><div>Total vendido: <b>${brl(d.total)}</b> em ${d.vs.length} venda(s)</div><div class="due">Comissão: ${d.due==null?"—":brl(d.due)}</div></div>
+<div class="box"><b>Por forma de pagamento</b>${Object.entries(d.porPg).map(([k,v])=>`<div>${k}${k==="Dinheiro"?" (fica com ela)":""}: ${brl(v)}</div>`).join("")||"<div>—</div>"}</div>
+<div class="box"><b>Acerto do mês</b><table class="acerto"><tbody>
+<tr><td>Comissão sobre as vendas</td><td class="r">${d.due==null?"—":brl(d.due)}</td></tr>
+<tr><td>+ Gastos a reembolsar (${d.gs.length})</td><td class="r">${brl(d.gastosTotal)}</td></tr>
+<tr><td>− Dinheiro que ela já recebeu</td><td class="r">− ${brl(d.dinheiro)}</td></tr>
+<tr class="tot"><td>${d.totalFinal>=0?"Você transfere pra ela":"Ela te repassa a diferença"}</td><td class="r">${brl(Math.abs(d.totalFinal))}</td></tr>
+</tbody></table></div>
+<h2>Vendas</h2><table><thead><tr><th>Data</th><th>Peça</th><th>Cliente</th><th>Pagamento</th><th class="r">Valor</th></tr></thead><tbody>${[...d.vs].reverse().map(v=>`<tr><td>${dataBR(v.data)}</td><td>${v.peca}</td><td>${v.cliente}</td><td>${pgTxt(v)}</td><td class="r">${brl(v.valor)}</td></tr>`).join("")}</tbody></table>
+<h2>Gastos</h2>${gastosHtml}</html>`;
   baixarArquivo(`relatorio-comissao-${slug(S.myRev.nome)}-${mes}.html`, new Blob([html],{type:"text/html"}));
 }
 function copiarResumo(mes,d){
-  const txt=`Pytave · Comissão de ${S.myRev.nome} — ${mesNome(mes)}\nVendas: ${d.vs.length}\nTotal vendido: ${brl(d.total)}\nA pagar: ${d.due==null?"—":brl(d.due)}`;
+  let txt=`Pytave · Comissão de ${S.myRev.nome} — ${mesNome(mes)}\nVendas: ${d.vs.length}\nTotal vendido: ${brl(d.total)}\nComissão: ${d.due==null?"—":brl(d.due)}`;
+  if(d.gastosTotal>0) txt+=`\nGastos a reembolsar: ${brl(d.gastosTotal)} (${d.gs.length})`;
+  txt+=`\n\nPor forma de pagamento:\n`+Object.entries(d.porPg).map(([k,v])=>`${k}: ${brl(v)}`).join("\n");
+  txt+=`\n\n${d.totalFinal>=0?"Você transfere pra ela":"Ela te repassa a diferença"}: ${brl(Math.abs(d.totalFinal))}`;
   navigator.clipboard.writeText(txt).then(()=>toast("Resumo copiado."),()=>toast("Não consegui copiar."));
 }
 async function marcarPago(mes,d){
   try{ if(d.pago){ await revRef(S.myTok).collection("pagamentos").doc(mes).delete(); toast("Comissão marcada como pendente."); }
-       else{ await revRef(S.myTok).collection("pagamentos").doc(mes).set({pagoEm:today,valor:d.due,total:d.total,comissao:d.pct}); toast(`Comissão de ${brl(d.due)} marcada como paga.`); } }
+       else{ await revRef(S.myTok).collection("pagamentos").doc(mes).set({pagoEm:today,valor:d.due,total:d.total,comissao:d.pct,gastos:d.gastosTotal,dinheiro:d.dinheiro,totalFinal:d.totalFinal}); toast(`Comissão de ${brl(d.due)} marcada como paga.`); } }
   catch(x){writeError(x)}
 }
 

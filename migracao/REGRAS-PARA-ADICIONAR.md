@@ -40,6 +40,16 @@ apague nada que já está lá, só adicione os trechos abaixo.
                      && request.auth.token.email is string
                      && request.auth.token.email.matches('.*@bertoluchiagencia[.]com[.]br$');
       }
+      match /gastos/{gastoId} {
+        allow read: if true;
+        allow create: if request.resource.data.descricao is string
+                       && request.resource.data.valor is number
+                       && request.resource.data.valor > 0
+                       && request.resource.data.valor < 100000;
+        allow update, delete: if request.auth != null
+                     && request.auth.token.email is string
+                     && request.auth.token.email.matches('.*@bertoluchiagencia[.]com[.]br$');
+      }
     }
     match /revConfig/{doc} {
       allow read: if true;
