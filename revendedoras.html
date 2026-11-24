@@ -1,0 +1,681 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
+<meta http-equiv="Pragma" content="no-cache">
+<meta http-equiv="Expires" content="0">
+<title>Revendedoras Pytave</title>
+<link rel="icon" href="favicon-32.png" sizes="32x32" type="image/png">
+<link rel="icon" href="favicon-256.png" sizes="256x256" type="image/png">
+<link rel="apple-touch-icon" href="apple-touch-icon.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Urbanist:wght@600;700&family=Figtree:wght@400;500;600&family=DM+Mono:wght@400;500&display=swap">
+<style>
+:root{color-scheme:light;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+html{scroll-padding-top:env(safe-area-inset-top,0px)}
+img{max-width:100%}
+[hidden]{display:none!important}
+:root{
+  --bg:#FBFAF3; --surface:#FFFFFF; --ink:#1F2E35; --muted:#5E7480; --line:#E2E5DA;
+  --accent:#4A7385; --accent-ink:#FFFFFF; --accent-soft:#E2EFF5;
+  --band:#FFFCCA; --logo:#6D94A5; --coral:#B9584A; --coral-soft:#FBE6E2;
+  --ok:#5B6A12; --ok-soft:#EEF2D2; --warn:#9A5A00; --warn-soft:#FBEFD9; --bad:#B42318; --bad-soft:#FBE4E1;
+  --f-display:"Urbanist","Avenir Next",system-ui,sans-serif;
+  --f-body:"Figtree","Segoe UI",system-ui,sans-serif;
+  --f-num:"DM Mono",ui-monospace,"SFMono-Regular",Menlo,monospace;
+  --r:10px;
+}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]){
+  --bg:#11191D; --surface:#19242A; --ink:#EEF3F5; --muted:#93A7B1; --line:#2A3940;
+  --accent:#8FB8CA; --accent-ink:#0E171B; --accent-soft:#213640;
+  --band:#19242A; --logo:#B8D8E9; --coral:#EAA197; --coral-soft:#3A2420;
+  --ok:#CFD88E; --ok-soft:#2A2F17; --warn:#E9A84A; --warn-soft:#33260F; --bad:#F07B6E; --bad-soft:#3A1A17;
+  color-scheme:dark}}
+:root[data-theme="dark"]{
+  --bg:#11191D; --surface:#19242A; --ink:#EEF3F5; --muted:#93A7B1; --line:#2A3940;
+  --accent:#8FB8CA; --accent-ink:#0E171B; --accent-soft:#213640;
+  --band:#19242A; --logo:#B8D8E9; --coral:#EAA197; --coral-soft:#3A2420;
+  --ok:#CFD88E; --ok-soft:#2A2F17; --warn:#E9A84A; --warn-soft:#33260F; --bad:#F07B6E; --bad-soft:#3A1A17;
+  color-scheme:dark}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--ink);font-family:var(--f-body);font-size:15px;line-height:1.5;padding-bottom:40px}
+h1,h2,h3{font-family:var(--f-display);font-weight:700;letter-spacing:-.01em;text-wrap:balance;margin:0}
+h2{font-size:1.3rem} h3{font-size:1.02rem}
+.num{font-family:var(--f-num);font-variant-numeric:tabular-nums}
+.muted{color:var(--muted)}
+.eyebrow{font-size:.72rem;text-transform:uppercase;letter-spacing:.09em;color:var(--muted);font-weight:600}
+.wrap{max-width:1080px;margin:0 auto;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px))}
+.top{border-bottom:1px solid var(--line);background:var(--band)}
+.top .wrap{display:flex;flex-wrap:wrap;align-items:center;gap:12px 20px;padding-block:18px 0}
+.brand{display:flex;align-items:baseline;gap:10px;flex:1 1 260px;min-width:0}
+.brand .logo{height:40px;width:auto;color:var(--logo);display:block}
+.brand .tag{font-family:var(--f-display);font-weight:700;color:var(--ink);font-size:1.05rem;padding-left:12px;border-left:1.5px solid var(--logo)}
+.tabs{display:flex;gap:4px;overflow-x:auto;flex-basis:100%;margin-top:6px;scrollbar-width:none}
+.tabs a{padding:10px 14px;color:var(--muted);text-decoration:none;font-weight:600;border-bottom:2px solid transparent;white-space:nowrap;cursor:pointer}
+.tabs a.on{color:var(--ink);border-color:var(--accent)}
+main{padding-block:24px 64px}
+.view{display:grid;gap:22px}
+.status{font-size:.85rem;padding:10px 14px;border-radius:var(--r);background:var(--warn-soft);color:var(--warn)}
+.panel{background:var(--surface);border:1px solid var(--line);border-radius:var(--r);padding:18px;display:grid;gap:14px;min-width:0}
+.panel-head{display:flex;flex-wrap:wrap;align-items:end;justify-content:space-between;gap:10px}
+.grid2{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,420px),1fr));gap:22px;align-items:start}
+.kpis{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,170px),1fr));gap:1px;background:var(--line);border:1px solid var(--line);border-radius:var(--r);overflow:hidden}
+.kpi{background:var(--surface);padding:16px 18px;display:grid;gap:4px}
+.kpi .v{font-family:var(--f-num);font-variant-numeric:tabular-nums;font-size:1.45rem;font-weight:500}
+.kpi.hi{background:var(--coral-soft)}
+.kpi.hi .v{color:var(--coral)}
+.kpi small{color:var(--muted);font-size:.78rem}
+form{display:grid;gap:14px}
+.fields{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,180px),1fr));gap:12px}
+.f{display:grid;gap:5px;min-width:0}
+.f > span{font-size:.8rem;font-weight:600;color:var(--muted)}
+input,select,textarea{font:inherit;color:var(--ink);background:var(--bg);border:1px solid var(--line);border-radius:8px;padding:9px 11px;width:100%;min-width:0}
+input:focus-visible,select:focus-visible,textarea:focus-visible{outline:2px solid var(--accent);outline-offset:0;border-color:transparent}
+.chips{display:flex;flex-wrap:wrap;gap:8px}
+.chips label{position:relative}
+.chips input{position:absolute;opacity:0;inset:0;cursor:pointer}
+.chips span{display:inline-block;padding:7px 12px;border:1px solid var(--line);border-radius:999px;font-size:.88rem;background:var(--bg)}
+.chips input:checked + span{background:var(--accent);color:var(--accent-ink);border-color:var(--accent)}
+.btn{font:inherit;font-weight:600;border:1px solid var(--line);background:var(--surface);color:var(--ink);padding:9px 16px;border-radius:8px;cursor:pointer}
+.btn:hover{border-color:var(--muted)}
+.btn.primary{background:var(--accent);border-color:var(--accent);color:var(--accent-ink)}
+.btn.small{padding:5px 10px;font-size:.82rem}
+.btn.danger{color:var(--bad)}
+.btn.danger.armed{background:var(--bad);color:var(--surface);border-color:var(--bad)}
+.btn:disabled{opacity:.5;cursor:not-allowed}
+.row{display:flex;flex-wrap:wrap;gap:10px;align-items:center}
+.drop{border:1.5px dashed var(--line);border-radius:var(--r);padding:14px;display:grid;gap:6px;background:var(--bg)}
+.drop.over{border-color:var(--accent);background:var(--accent-soft)}
+.tw{overflow-x:auto;border:1px solid var(--line);border-radius:8px}
+table{border-collapse:collapse;width:100%;font-size:.9rem}
+th,td{padding:9px 12px;text-align:left;border-bottom:1px solid var(--line);vertical-align:middle}
+th{font-size:.72rem;text-transform:uppercase;letter-spacing:.07em;color:var(--muted);font-weight:600;background:var(--bg);white-space:nowrap}
+tr:last-child td{border-bottom:0}
+td.r,th.r{text-align:right}
+tfoot td{font-weight:600;background:var(--bg)}
+.items td{padding:6px}
+.items input{padding:7px 9px}
+.pill{display:inline-block;padding:2px 9px;border-radius:999px;font-size:.75rem;font-weight:600;white-space:nowrap}
+.pill.ok{background:var(--ok-soft);color:var(--ok)}
+.pill.warn{background:var(--warn-soft);color:var(--warn)}
+.pill.bad{background:var(--bad-soft);color:var(--bad)}
+.pill.neutral{background:var(--accent-soft);color:var(--accent)}
+.empty{padding:22px;text-align:center;color:var(--muted);border:1px dashed var(--line);border-radius:var(--r)}
+.list{display:grid;gap:0}
+.li{display:flex;justify-content:space-between;gap:12px;padding:10px 0;border-bottom:1px solid var(--line);align-items:center}
+.li:last-child{border-bottom:0}
+.bars{display:grid;gap:8px}
+.bar{display:grid;grid-template-columns:130px 1fr auto;gap:10px;align-items:center;font-size:.88rem}
+.bar i{display:block;height:8px;border-radius:4px;background:var(--accent);min-width:2px}
+.bar .track{background:var(--accent-soft);border-radius:4px}
+details summary{cursor:pointer;font-weight:600}
+.big-due{font-family:var(--f-display);font-size:2.4rem;line-height:1.1;color:var(--coral)}
+.agrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(240px,1fr));gap:14px}
+.acard{background:var(--surface);border:1px solid var(--line);border-radius:var(--r);padding:16px;display:grid;gap:10px}
+.acc{border:1px solid var(--line);border-radius:8px;padding:10px;background:var(--bg);display:grid;gap:6px;font-size:12.5px}
+.acc .row2{display:flex;align-items:center;justify-content:space-between;gap:8px}
+.acc code{font-family:var(--f-num);background:var(--surface);border:1px solid var(--line);border-radius:6px;padding:4px 8px;word-break:break-all;display:block;font-size:12px}
+.scrim{position:fixed;inset:0;background:rgba(20,20,20,.45);display:flex;align-items:flex-end;justify-content:center;z-index:50}
+@media (min-width:640px){.scrim{align-items:center}}
+.sheet{background:var(--surface);border-radius:18px 18px 0 0;padding:20px;width:100%;max-width:560px;max-height:88vh;overflow:auto}
+@media (min-width:640px){.sheet{border-radius:var(--r)}}
+.sh{display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:14px}
+.close{background:transparent;border:none;color:var(--muted);font-size:20px;cursor:pointer;line-height:1;padding:4px}
+.tokenbox{font-family:var(--f-num);font-size:12.5px;background:var(--bg);border:1px solid var(--line);border-radius:8px;padding:8px 10px;word-break:break-all}
+.gbtn{display:inline-flex;align-items:center;gap:10px;background:#fff;color:#1F2E35;border:1px solid var(--line);border-radius:8px;padding:10px 16px;font-weight:600;cursor:pointer;font:inherit}
+.spin{display:inline-block;width:16px;height:16px;border:2px solid var(--line);border-top-color:var(--accent);border-radius:50%;animation:sp .7s linear infinite}
+@keyframes sp{to{transform:rotate(360deg)}}
+.err{color:var(--bad);font-size:13px;margin:4px 0}
+#toast{position:fixed;left:50%;transform:translateX(-50%);bottom:calc(20px + env(safe-area-inset-bottom,0px));background:var(--ink);color:var(--bg);padding:10px 16px;border-radius:8px;font-weight:500;max-width:calc(100% - 32px);z-index:60}
+@media (max-width:520px){.bar{grid-template-columns:96px 1fr auto}.big-due{font-size:2rem}}
+</style>
+</head>
+<body>
+<div id="app"></div>
+<div id="toast" hidden></div>
+
+<script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-auth-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-firestore-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-storage-compat.js"></script>
+<script>
+/* ---------------- Firebase (mesmo projeto do site das influenciadoras) ---------------- */
+const firebaseConfig = {
+  apiKey: "AIzaSyBttGz16TTL7peZUz17XwfZL9ZoZ0Sv69Y",
+  authDomain: "pytave-influenciadoras.firebaseapp.com",
+  projectId: "pytave-influenciadoras",
+  storageBucket: "pytave-influenciadoras.firebasestorage.app",
+  messagingSenderId: "98863512315",
+  appId: "1:98863512315:web:0309010cf2056d44210e5e"
+};
+firebase.initializeApp(firebaseConfig);
+const auth = firebase.auth();
+const db = firebase.firestore();
+const storage = firebase.storage();
+const ADMIN_DOMAIN = "@bertoluchiagencia.com.br";
+const PAGAMENTOS = ["Pix","Dinheiro","Cartão de crédito","Cartão de débito","Outro"];
+
+/* ---------------- helpers ---------------- */
+const el=(tag,attrs,...kids)=>{const e=document.createElement(tag);for(const[k,v]of Object.entries(attrs||{})){if(v===null||v===undefined||v===false)continue;if(k==="class")e.className=v;else if(k==="html")e.innerHTML=v;else if(k==="value")e.value=v;else if(k.startsWith("on"))e.addEventListener(k.slice(2),v);else e.setAttribute(k,v===true?"":v)}for(const k of kids.flat()){if(k==null||k===false)continue;e.append(k.nodeType?k:document.createTextNode(String(k)))}return e};
+const $=s=>document.querySelector(s);
+const root=$("#app");
+const esc = s => String(s ?? "");
+const brl = v => (Number(v)||0).toLocaleString("pt-BR",{style:"currency",currency:"BRL"});
+const pad = n => String(n).padStart(2,"0");
+const now = new Date();
+const today = `${now.getFullYear()}-${pad(now.getMonth()+1)}-${pad(now.getDate())}`;
+const thisMonth = today.slice(0,7);
+const MESES = ["janeiro","fevereiro","março","abril","maio","junho","julho","agosto","setembro","outubro","novembro","dezembro"];
+const mesNome = m => { const [y,mm] = (m||thisMonth).split("-"); return `${MESES[+mm-1]} de ${y}`; };
+const dataBR = d => d ? d.split("-").reverse().join("/") : "";
+const pgTxt = v => v.pagamento + (v.parcelas>1 ? ` ${v.parcelas}x` : "");
+const slug = s => String(s||"").normalize("NFD").replace(/[̀-ͯ]/g,"").replace(/[^A-Za-z0-9]+/g,"-").replace(/^-|-$/g,"").toLowerCase() || "x";
+const parseValor = s => { s = String(s||"").trim().replace(/[R$\s]/g,""); if(s.includes(",")) s = s.replace(/\./g,"").replace(",","."); const n = parseFloat(s); return isFinite(n) ? Math.round(n*100)/100 : NaN; };
+const uid = () => Math.random().toString(36).slice(2,10);
+const randToken = () => Array.from({length:16},()=>"abcdefghijkmnpqrstuvwxyz23456789"[Math.floor(Math.random()*33)]).join("");
+const PYTAVE_LOGO='<svg class="logo" viewBox="320 395 1270 385" role="img" aria-label="Pytave" fill="currentColor"><path d="M430.24,615.75h-59.93v79.01h-39.32v-259.17h99.24c13.48,0,25.63,2.29,36.45,6.87,10.81,4.58,20.04,10.95,27.67,19.09,7.63,8.15,13.55,17.75,17.75,28.82,4.2,11.07,6.3,23.09,6.3,36.07,0,11.45-1.85,22.52-5.53,33.21-3.69,10.69-9.23,20.17-16.6,28.44-7.38,8.27-16.54,14.95-27.48,20.04-10.94,5.09-23.8,7.63-38.55,7.63ZM420.7,471.09h-50.38v109.16h50.38c8.14,0,15.78-1.27,22.9-3.82,7.12-2.54,13.29-6.23,18.51-11.07,5.21-4.83,9.35-10.56,12.4-17.18,3.05-6.61,4.58-14.12,4.58-22.52,0-6.87-1.28-13.55-3.82-20.04-2.55-6.49-6.24-12.34-11.07-17.56-4.84-5.21-10.88-9.35-18.13-12.41-7.25-3.05-15.72-4.58-25.38-4.58Z"/></svg>';
+
+let toastT=null;
+function toast(msg){const t=$("#toast");t.textContent=msg;t.hidden=false;clearTimeout(toastT);toastT=setTimeout(()=>t.hidden=true,3200)}
+function writeError(e){ toast(e?.code==="permission-denied" ? "Sem permissão para salvar isso." : "Não deu para salvar agora. Tente de novo."); }
+function closeOverlay(){const s=document.querySelector(".scrim");if(s)s.remove()}
+function scrim(content){closeOverlay();const w=el("div",{class:"scrim",onclick:e=>{if(e.target.classList.contains("scrim"))closeOverlay()}},el("div",{class:"sheet"},content));document.body.append(w)}
+function copiar(txt){navigator.clipboard.writeText(txt).then(()=>toast("Copiado"),()=>toast(txt))}
+
+let S={authReady:false,authUser:null,isAdmin:false,
+  revs:[],revsReady:false, cfg:{comissao:null},
+  myTok:null, myRev:undefined, myRevErr:false,
+  notas:[],vendas:[],pagamentos:{}, dataReady:{notas:false,vendas:false,pag:false},
+  view:"resumo", preview:false};
+
+function revRef(tok){return db.collection("revendedoras").doc(tok)}
+const cfgRef=db.collection("revConfig").doc("geral");
+
+/* ---------------- cálculos ---------------- */
+function vendasDe(mes){ return S.vendas.filter(v=>!mes||(v.data||"").slice(0,7)===mes).sort((a,b)=>(b.data||"").localeCompare(a.data||"")||(b.criadoEm||0)-(a.criadoEm||0)); }
+function estoque(){
+  const vendidos={};
+  for(const v of S.vendas) if(v.itemKey) vendidos[v.itemKey]=(vendidos[v.itemKey]||0)+1;
+  const rows=[];
+  for(const n of S.notas.slice().sort((a,b)=>(a.data||"").localeCompare(b.data||"")))
+    for(const it of (n.itens||[])){
+      const key=`${n.id}:${it.id}`; const vend=vendidos[key]||0; const qtd=Number(it.qtd)||0;
+      rows.push({key,nota:n,peca:it.peca,tamanho:it.tamanho||"",valor:Number(it.valor)||0,qtd,vend,resta:Math.max(0,qtd-vend)});
+    }
+  return rows;
+}
+function comissaoMes(mes){
+  const pago=S.pagamentos[mes]; const pct=pago?.comissao??S.cfg.comissao;
+  const vs=vendasDe(mes); const total=vs.reduce((s,v)=>s+(Number(v.valor)||0),0);
+  return {vs,total,pct,due:pct==null?null:Math.round(total*pct)/100,pago};
+}
+const itemLabel=r=>`${r.peca}${r.tamanho?" · "+r.tamanho:""}`;
+
+/* ---------------- gate / login ---------------- */
+function gateAcesso(){
+  const code=el("input",{type:"text",placeholder:"Ex.: ab12cd34ef56gh78",autocapitalize:"off",autocorrect:"off",spellcheck:"false"});
+  const err=el("div",{class:"err",hidden:true});
+  const form=el("form",{style:"margin-top:4px"},
+    el("label",{class:"f"},"Código de acesso",code),err,
+    el("button",{class:"btn primary",type:"submit",style:"width:100%;justify-content:center"},"Entrar"));
+  form.addEventListener("submit",e=>{
+    e.preventDefault(); const tok=code.value.trim();
+    if(!tok){err.textContent="Digite o código.";err.hidden=false;return}
+    location.hash=tok;
+  });
+  return el("div",{class:"panel",style:"max-width:420px;margin:40px auto"},
+    el("div",{style:"text-align:center;margin-bottom:14px"},el("span",{html:PYTAVE_LOGO})),
+    el("h3",{style:"text-align:center;margin-bottom:4px"},"Acesse seu painel"),
+    el("p",{class:"muted",style:"text-align:center;margin-bottom:16px"},S.myRevErr?"Esse link não é válido. Peça o código à equipe Pytave.":"Digite o código que a equipe Pytave te enviou, ou abra o link que você recebeu."),
+    form,
+    el("div",{style:"text-align:center;margin-top:18px"},el("button",{class:"btn small",type:"button",onclick:entrarComoEquipe},"Sou da equipe Pytave")));
+}
+function entrarComoEquipe(){
+  const prov=new firebase.auth.GoogleAuthProvider();
+  prov.setCustomParameters({hd:"bertoluchiagencia.com.br"});
+  auth.signInWithPopup(prov).catch(e=>{ if(e.code!=="auth/popup-closed-by-user") toast("Não foi possível entrar: "+(e.message||e.code)); });
+}
+
+/* ---------------- carregar revendedora (por token) ---------------- */
+let unsubs=[];
+function pararEscutas(){ unsubs.forEach(u=>u()); unsubs=[]; S.dataReady={notas:false,vendas:false,pag:false}; S.notas=[]; S.vendas=[]; S.pagamentos={}; }
+function carregarRevendedora(tok){
+  pararEscutas();
+  revRef(tok).get().then(snap=>{
+    if(!snap.exists){S.myRevErr=true;S.myRev=null;render();return}
+    S.myRev={id:snap.id,...snap.data()};
+    unsubs.push(revRef(tok).onSnapshot(s=>{ if(s.exists){S.myRev={id:s.id,...s.data()};render()} }));
+    unsubs.push(revRef(tok).collection("notas").onSnapshot(s=>{S.notas=s.docs.map(d=>({id:d.id,...d.data()}));S.dataReady.notas=true;render()},()=>{}));
+    unsubs.push(revRef(tok).collection("vendas").onSnapshot(s=>{S.vendas=s.docs.map(d=>({id:d.id,...d.data()}));S.dataReady.vendas=true;render()},()=>{}));
+    unsubs.push(revRef(tok).collection("pagamentos").onSnapshot(s=>{S.pagamentos=Object.fromEntries(s.docs.map(d=>[d.id,d.data()]));S.dataReady.pag=true;render()},()=>{}));
+    render();
+  }).catch(()=>{S.myRevErr=true;S.myRev=null;render()});
+}
+
+/* ---------------- render raiz ---------------- */
+function render(){
+  root.replaceChildren();
+  root.append(
+    el("header",{class:"top"},el("div",{class:"wrap"},
+      el("div",{class:"brand"},el("span",{html:PYTAVE_LOGO}),el("span",{class:"tag"},"Revendedoras")),
+      S.isAdmin&&!S.preview?el("button",{class:"btn small",onclick:()=>auth.signOut()},"Sair"):null,
+      (S.myTok&&(S.isAdmin||!S.isAdmin))?tabsNav():null)),
+    el("main",{class:"wrap"},body()));
+}
+function tabsNav(){
+  if(!S.myTok || S.myRev===undefined || !S.myRev) return null;
+  const abas=[["resumo","Resumo"],["estoque","Estoque e notas"],["vendas","Registrar vendas"],["relatorio","Relatório do mês"]];
+  return el("nav",{class:"tabs"},abas.map(([k,l])=>el("a",{class:S.view===k?"on":"",onclick:()=>{S.view=k;render()}},l)));
+}
+function body(){
+  if(!S.authReady) return el("div",{class:"empty"},el("span",{class:"spin"}),el("div",{style:"margin-top:10px"},"Carregando…"));
+  if(S.isAdmin && !S.preview){
+    if(S.myTok) return adminPreview();
+    return adminView();
+  }
+  return publicaView();
+}
+function adminPreview(){
+  return el("div",{},
+    el("div",{class:"row",style:"justify-content:space-between;align-items:center;margin-bottom:14px"},
+      el("button",{class:"btn small",type:"button",onclick:()=>{location.hash="";S.myTok=null;pararEscutas();render()}},"← Ver todas as revendedoras"),
+      el("span",{class:"pill neutral"},"👁 Visão dela")),
+    publicaView());
+}
+function publicaView(){
+  if(!S.myTok) return gateAcesso();
+  if(S.myRev===undefined) return el("div",{class:"empty"},el("span",{class:"spin"}),el("div",{style:"margin-top:10px"},"Carregando…"));
+  if(!S.myRev) return gateAcesso();
+  return painelView();
+}
+
+/* ---------------- painel da revendedora (abas) ---------------- */
+function painelView(){
+  if(S.view==="resumo") return viewResumo();
+  if(S.view==="estoque") return viewEstoque();
+  if(S.view==="vendas") return viewVendas();
+  if(S.view==="relatorio") return viewRelatorio();
+  return viewResumo();
+}
+function viewResumo(){
+  const es=estoque(); const c=comissaoMes(thisMonth);
+  const rec=es.reduce((s,r)=>s+r.qtd,0), resta=es.reduce((s,r)=>s+r.resta,0);
+  const kpis=[
+    ["Peças recebidas",rec,`${new Set(es.map(r=>r.nota.id)).size} nota(s)`],
+    ["Peças em mãos",resta,`valor ${brl(es.reduce((s,r)=>s+r.resta*r.valor,0))}`],
+    ["Vendas no mês",c.vs.length,"peças vendidas"],
+    ["Vendido no mês",brl(c.total),"soma das vendas"],
+    ["Comissão do mês",c.due==null?"—":brl(c.due),c.pct==null?"defina a % em Relatório":`${String(c.pct).replace(".",",")}% sobre as vendas`,true],
+  ];
+  const last=vendasDe().slice(0,6);
+  const low=es.filter(r=>r.resta<=1).sort((a,b)=>a.resta-b.resta).slice(0,8);
+  return el("div",{class:"view"},
+    el("div",{class:"panel-head"},el("div",{},el("h2",{},`Resumo de ${S.myRev.nome}`),el("span",{class:"muted"},`Mês atual: ${mesNome(thisMonth)}`)),
+      el("button",{class:"btn primary",onclick:()=>{S.view="vendas";render()}},"+ Registrar venda")),
+    el("div",{class:"kpis"},kpis.map(([l,v,s,hi])=>el("div",{class:"kpi"+(hi?" hi":"")},el("span",{class:"eyebrow"},l),el("span",{class:"v"},String(v)),el("small",{},s)))),
+    el("div",{class:"grid2"},
+      el("div",{class:"panel"},el("h3",{},"Últimas vendas"),
+        last.length?el("div",{class:"list"},last.map(v=>el("div",{class:"li"},el("div",{},el("b",{},v.peca),el("div",{class:"muted",style:"font-size:.85rem"},`${v.cliente} · ${pgTxt(v)} · ${dataBR(v.data)}`)),el("span",{class:"num"},brl(v.valor))))):el("div",{class:"empty"},"Nenhuma venda registrada ainda. Vá em Registrar vendas para lançar a primeira.")),
+      el("div",{class:"panel"},el("h3",{},"Peças acabando"),
+        !es.length?el("div",{class:"empty"},"Quando a equipe subir a nota de remessa, as peças aparecem aqui."):
+        low.length?el("div",{class:"list"},low.map(r=>el("div",{class:"li"},el("div",{},el("b",{},r.peca)," ",el("span",{class:"muted"},r.tamanho)),r.resta?el("span",{class:"pill warn"},"resta 1"):el("span",{class:"pill bad"},"esgotada")))):el("div",{class:"empty"},"Tudo com estoque."))));
+}
+function viewEstoque(){
+  const es=estoque();
+  const tabela=es.length?el("div",{class:"tw"},el("table",{},
+    el("thead",{},el("tr",{},["Peça","Tam.","Nota","Preço","Recebidas","Vendidas","Em mãos"].map((h,i)=>el("th",{class:i>=3?"r":""},h)))),
+    el("tbody",{},es.map(r=>el("tr",{},
+      el("td",{},r.peca),el("td",{},r.tamanho),el("td",{class:"muted"},r.nota.numero||""),
+      el("td",{class:"r num"},brl(r.valor)),el("td",{class:"r num"},String(r.qtd)),el("td",{class:"r num"},String(r.vend)),
+      el("td",{class:"r"},r.resta===0?el("span",{class:"pill bad"},"0"):r.resta===1?el("span",{class:"pill warn"},"1"):el("span",{class:"pill ok"},String(r.resta)))))))):
+    el("div",{class:"empty"},"Nenhuma nota recebida ainda.");
+  const notasList=S.notas.slice().sort((a,b)=>(b.data||"").localeCompare(a.data||"")).map(n=>{
+    const q=(n.itens||[]).reduce((s,i)=>s+(Number(i.qtd)||0),0), v=(n.itens||[]).reduce((s,i)=>s+(Number(i.qtd)||0)*(Number(i.valor)||0),0);
+    const det=el("details",{},el("summary",{},`Nota ${esc(n.numero)} · ${dataBR(n.data)} `,el("span",{class:"muted",style:"font-weight:400"},`· ${q} peças · ${brl(v)}`)),
+      el("div",{style:"display:grid;gap:10px;margin-top:10px"},
+        el("div",{class:"tw"},el("table",{},el("thead",{},el("tr",{},["Peça","Tam.","Qtd.","Preço"].map((h,i)=>el("th",{class:i>=2?"r":""},h)))),
+          el("tbody",{},(n.itens||[]).map(i=>el("tr",{},el("td",{},i.peca),el("td",{},i.tamanho),el("td",{class:"r num"},String(i.qtd)),el("td",{class:"r num"},brl(i.valor))))))),
+        el("div",{class:"row"},
+          n.arquivoUrl?el("a",{class:"btn small",href:n.arquivoUrl,target:"_blank",rel:"noopener"},"Abrir arquivo da nota"):el("span",{class:"muted"},"Sem arquivo anexado"),
+          S.isAdmin?el("button",{class:"btn small danger",type:"button",onclick:()=>excluirNota(n.id)},"Excluir nota"):null)));
+    return el("div",{style:"border-top:1px solid var(--line);padding-top:12px"},det);
+  });
+  return el("div",{class:"view"},
+    S.isAdmin?formNota():el("p",{class:"muted"},"Só a equipe Pytave adiciona notas. Aqui você vê o que recebeu e quanto ainda tem de cada peça."),
+    el("div",{class:"panel"},el("div",{class:"panel-head"},el("h2",{},"Estoque com a revendedora"),el("span",{class:"muted"},es.length?`${es.reduce((s,r)=>s+r.resta,0)} de ${es.reduce((s,r)=>s+r.qtd,0)} peças em mãos`:"")),tabela),
+    el("div",{class:"panel"},el("h2",{},"Notas recebidas"),notasList.length?el("div",{},notasList):el("div",{class:"empty"},"Nenhuma nota recebida ainda.")));
+}
+let draftNota=[{id:uid(),peca:"",tamanho:"",qtd:1,valor:""}];
+let draftFile=null;
+function formNota(){
+  const numero=el("input",{placeholder:"Ex.: 000123",required:true});
+  const data=el("input",{type:"date",value:today,required:true});
+  const file=el("input",{type:"file",accept:".xml,.pdf,image/*"});
+  const arqInfo=el("small",{class:"muted"},draftFile?`${draftFile.name}`:"Nenhum arquivo escolhido.");
+  const itensBody=el("tbody",{});
+  const totalEl=el("span",{class:"muted"});
+  function renderItens(){
+    itensBody.replaceChildren(...draftNota.map((it,i)=>{
+      const p=el("input",{value:it.peca,placeholder:"Ex.: Conjunto Sofia",oninput:e=>it.peca=e.target.value});
+      const t=el("input",{value:it.tamanho,placeholder:"M",oninput:e=>it.tamanho=e.target.value});
+      const q=el("input",{value:String(it.qtd),style:"text-align:right",oninput:e=>{it.qtd=e.target.value;calcTotal()}});
+      const v=el("input",{value:it.valor,style:"text-align:right",placeholder:"0,00",oninput:e=>{it.valor=e.target.value;calcTotal()}});
+      return el("tr",{},el("td",{style:"min-width:200px"},p),el("td",{style:"width:80px"},t),el("td",{style:"width:80px"},q),el("td",{style:"width:140px"},v),
+        el("td",{style:"width:44px"},el("button",{type:"button",class:"btn small","aria-label":"Remover peça",onclick:()=>{draftNota.splice(i,1);if(!draftNota.length)draftNota.push({id:uid(),peca:"",tamanho:"",qtd:1,valor:""});renderItens()}},"×")));
+    }));
+    calcTotal();
+  }
+  function calcTotal(){const q=draftNota.reduce((s,i)=>s+(parseInt(i.qtd)||0),0);const v=draftNota.reduce((s,i)=>s+(parseInt(i.qtd)||0)*(parseValor(i.valor)||0),0);totalEl.textContent=`${q} peças · ${brl(v)}`;}
+  function parseNFe(text){
+    const doc=new DOMParser().parseFromString(text,"application/xml");
+    if(doc.getElementsByTagName("parsererror").length) return null;
+    const g=(e,t)=>e.getElementsByTagName(t)[0]?.textContent?.trim()||"";
+    const dets=[...doc.getElementsByTagName("det")]; if(!dets.length) return null;
+    const itens=dets.map(d=>{const p=d.getElementsByTagName("prod")[0]||d;const nome=g(p,"xProd");const tam=(nome.match(/\b(PP|GG|XG|EG|P|M|G|\d{2})\s*$/i)||[])[1]||"";
+      return{id:uid(),peca:tam?nome.replace(new RegExp("[\\s\\-/]*"+tam+"\\s*$","i"),"").trim():nome,tamanho:tam.toUpperCase(),qtd:Math.round(parseFloat(g(p,"qCom"))||1),valor:(parseFloat(g(p,"vUnCom"))||0).toFixed(2).replace(".",",")};});
+    return{numero:g(doc,"nNF"),data:(g(doc,"dhEmi")||g(doc,"dEmi")).slice(0,10),itens};
+  }
+  file.addEventListener("change",async e=>{
+    const f=e.target.files[0]; draftFile=f||null; arqInfo.textContent=f?`${f.name} · ${(f.size/1024).toFixed(0)} KB`:"Nenhum arquivo escolhido.";
+    if(f&&/\.xml$/i.test(f.name)){
+      const r=parseNFe(await f.text());
+      if(r){draftNota=r.itens;if(r.numero)numero.value=r.numero;if(r.data)data.value=r.data;renderItens();arqInfo.textContent+=` · ${r.itens.length} peça(s) lidas do XML. Confira os preços: a nota pode trazer o preço de custo, não o de venda.`}
+      else arqInfo.textContent+=" · Não consegui ler as peças deste XML. Digite-as abaixo.";
+    }else if(f){ arqInfo.textContent += " · Leitura automática de PDF/foto não está disponível aqui — confira e digite as peças abaixo."; }
+  });
+  const err=el("div",{class:"err",hidden:true});
+  const btn=el("button",{class:"btn primary",type:"submit"},"Salvar nota");
+  const form=el("form",{},
+    el("div",{},el("h2",{},"Subir nota de remessa"),el("p",{class:"muted",style:"margin:4px 0 0"},"Anexe a nota em XML, PDF ou foto. Confira as peças antes de salvar.")),
+    el("div",{class:"fields"},el("label",{class:"f"},el("span",{},"Número da nota"),numero),el("label",{class:"f"},el("span",{},"Data de entrega"),data)),
+    el("div",{class:"drop"},el("label",{class:"f"},el("span",{},"Arquivo da nota (XML, PDF ou foto)"),file),arqInfo),
+    el("div",{class:"tw"},el("table",{class:"items"},el("thead",{},el("tr",{},el("th",{},"Peça"),el("th",{},"Tam."),el("th",{class:"r"},"Qtd."),el("th",{class:"r"},"Preço de venda (R$)"),el("th",{}))),itensBody)),
+    el("div",{class:"row",style:"justify-content:space-between"},el("button",{type:"button",class:"btn small",onclick:()=>{draftNota.push({id:uid(),peca:"",tamanho:"",qtd:1,valor:""});renderItens()}},"+ Adicionar peça"),totalEl),
+    err,el("div",{class:"row"},btn));
+  form.addEventListener("submit",async e=>{
+    e.preventDefault();
+    const itens=draftNota.filter(i=>i.peca.trim()).map(i=>({id:i.id,peca:i.peca.trim(),tamanho:i.tamanho.trim(),qtd:Math.max(1,parseInt(i.qtd)||1),valor:parseValor(i.valor)||0}));
+    if(!itens.length){err.textContent="Adicione pelo menos uma peça com nome.";err.hidden=false;return}
+    btn.disabled=true;btn.textContent="Salvando…";err.hidden=true;
+    try{
+      let arquivoUrl=null,arquivoNome=null;
+      if(draftFile){
+        try{ const ref=storage.ref().child(`revendedoras/${S.myTok}/notas/${uid()}_${draftFile.name}`); await ref.put(draftFile); arquivoUrl=await ref.getDownloadURL(); arquivoNome=draftFile.name; }
+        catch(x){ toast("A nota foi salva, mas o arquivo não subiu."); }
+      }
+      await revRef(S.myTok).collection("notas").doc(uid()+Date.now().toString(36)).set({numero:numero.value.trim(),data:data.value,itens,arquivoUrl,arquivoNome,criadoEm:Date.now()});
+      draftNota=[{id:uid(),peca:"",tamanho:"",qtd:1,valor:""}];draftFile=null;form.reset();data.value=today;arqInfo.textContent="Nenhum arquivo escolhido.";renderItens();
+      toast(`Nota salva com ${itens.reduce((s,i)=>s+i.qtd,0)} peças.`);
+    }catch(x){writeError(x)}
+    btn.disabled=false;btn.textContent="Salvar nota";
+  });
+  renderItens();
+  return el("div",{class:"panel",id:"nota-panel"},form);
+}
+async function excluirNota(id){
+  if(!confirm("Excluir esta nota?"))return;
+  try{ await revRef(S.myTok).collection("notas").doc(id).delete(); toast("Nota excluída."); }catch(e){writeError(e)}
+}
+function viewVendas(){
+  const m={}; for(const r of estoque()) if(r.resta>0){const l=itemLabel(r); if(!m[l])m[l]=r.key;}
+  const itemInput=el("input",{list:"v-itens",placeholder:"Digite para buscar ou escolha na lista",autocomplete:"off",required:true});
+  const datalist=el("datalist",{id:"v-itens"},Object.keys(m).map(l=>el("option",{value:l})));
+  const hint=el("small",{class:"muted"});
+  const cliente=el("input",{placeholder:"Nome da cliente",required:true});
+  const valor=el("input",{inputmode:"decimal",placeholder:"0,00",required:true});
+  const dataIn=el("input",{type:"date",value:today,required:true});
+  const obs=el("input",{placeholder:"Ex.: pagou metade, resto dia 10"});
+  const parc=el("select",{},Array.from({length:12},(_,i)=>el("option",{value:String(i+1)},`${i+1}x${i===0?" (à vista)":""}`)));
+  const parcWrap=el("label",{class:"f",style:"max-width:200px",hidden:true},el("span",{},"Parcelas no crédito"),parc);
+  let pgSel=PAGAMENTOS[0];
+  const pgChips=el("div",{class:"chips",role:"radiogroup"},PAGAMENTOS.map((p,i)=>el("label",{},el("input",{type:"radio",name:"pg",checked:i===0,onchange:()=>{pgSel=p;parcWrap.hidden=p!=="Cartão de crédito"}}),el("span",{},p))));
+  let autoValor=true;
+  valor.addEventListener("input",()=>autoValor=false);
+  itemInput.addEventListener("input",e=>{
+    const key=m[e.target.value.trim()]; const r=key?estoque().find(x=>x.key===key):null;
+    hint.textContent = e.target.value.trim()&&!r ? "Peça fora do estoque: será registrada só pelo nome." : "";
+    if(r&&r.valor&&(autoValor||!valor.value)){valor.value=r.valor.toFixed(2).replace(".",",");autoValor=true;}
+  });
+  const err=el("div",{class:"err",hidden:true});
+  const btn=el("button",{class:"btn primary",type:"submit"},"Registrar venda");
+  const form=el("form",{},
+    el("div",{class:"fields"},el("label",{class:"f"},el("span",{},"Data"),dataIn),el("label",{class:"f",style:"grid-column:span 2"},el("span",{},"Peça"),itemInput,datalist,hint)),
+    el("div",{class:"fields"},el("label",{class:"f"},el("span",{},"Cliente"),cliente),el("label",{class:"f"},el("span",{},"Valor da venda (R$)"),valor)),
+    el("div",{class:"f"},el("span",{},"Forma de pagamento"),pgChips),
+    parcWrap,
+    el("label",{class:"f"},el("span",{},"Observação (opcional)"),obs),
+    err,el("div",{class:"row"},btn));
+  form.addEventListener("submit",async e=>{
+    e.preventDefault();
+    const txt=itemInput.value.trim(); const key=m[txt]; const r=key?estoque().find(x=>x.key===key):null;
+    const peca=r?`${r.peca}${r.tamanho?" "+r.tamanho:""}`:txt;
+    if(!peca){err.textContent="Escolha a peça vendida.";err.hidden=false;return}
+    const v=parseValor(valor.value); if(!(v>0)){err.textContent="Informe o valor da venda, por exemplo 179,90.";err.hidden=false;return}
+    err.hidden=true; btn.disabled=true;
+    try{
+      await revRef(S.myTok).collection("vendas").doc(uid()+Date.now().toString(36)).set({
+        data:dataIn.value||today, itemKey:r?key:null, peca, cliente:cliente.value.trim(), valor:v,
+        pagamento:pgSel, parcelas:pgSel==="Cartão de crédito"?Number(parc.value||1):null, obs:obs.value.trim(), criadoEm:Date.now()});
+      toast(`Venda registrada: ${peca} · ${brl(v)}`);
+      itemInput.value="";cliente.value="";valor.value="";obs.value="";hint.textContent="";autoValor=true;
+    }catch(x){writeError(x)}
+    btn.disabled=false;
+  });
+  const mesIn=el("input",{type:"month",value:thisMonth,onchange:()=>{renderLista()}});
+  const listaDiv=el("div",{});
+  function renderLista(){
+    const vs=vendasDe(mesIn.value||thisMonth);
+    if(!vs.length){ listaDiv.replaceChildren(el("div",{class:"empty"},`Nenhuma venda em ${mesNome(mesIn.value||thisMonth)}.`)); return; }
+    const thead=el("thead",{},el("tr",{},["Data","Peça","Cliente","Pagamento","Valor"].map((h,i)=>el("th",{class:i===4?"r":""},h))));
+    const tbody=el("tbody",{},vs.map(v=>el("tr",{},
+      el("td",{class:"num"},dataBR(v.data)),
+      el("td",{},v.peca,v.obs?el("div",{class:"muted",style:"font-size:.8rem"},v.obs):null),
+      el("td",{},v.cliente),
+      el("td",{},el("span",{class:"pill neutral"},pgTxt(v))),
+      el("td",{class:"r num"},brl(v.valor)))));
+    const total=vs.reduce((s,v)=>s+(+v.valor||0),0);
+    const tfoot=el("tfoot",{},el("tr",{},el("td",{colspan:"4"},`${vs.length} venda(s)`),el("td",{class:"r num"},brl(total))));
+    listaDiv.replaceChildren(el("div",{class:"tw"},el("table",{},thead,tbody,tfoot)));
+  }
+  renderLista();
+  return el("div",{class:"view"},
+    el("div",{class:"panel"},el("h2",{},"Nova venda"),form),
+    el("div",{class:"panel"},el("div",{class:"panel-head"},el("h2",{},"Vendas do mês"),el("label",{class:"f",style:"width:170px"},el("span",{},"Mês"),mesIn)),listaDiv));
+}
+function viewRelatorio(){
+  const mesIn=el("input",{type:"month",value:thisMonth});
+  const box=el("div",{});
+  function r(){
+    const mes=mesIn.value||thisMonth; const c=comissaoMes(mes);
+    const porPg={}; for(const v of c.vs) porPg[v.pagamento]=(porPg[v.pagamento]||0)+(+v.valor||0);
+    const max=Math.max(1,...Object.values(porPg));
+    const vs=[...c.vs].reverse();
+    box.replaceChildren(
+      el("div",{class:"panel-head"},el("h2",{},`Relatório de ${S.myRev.nome}`),el("label",{class:"f",style:"width:170px"},el("span",{},"Mês"),mesIn)),
+      el("div",{class:"grid2"},
+        el("div",{class:"panel"},
+          el("span",{class:"eyebrow"},"Comissão a pagar"),
+          el("div",{class:"big-due num"},c.due==null?"—":brl(c.due)),
+          el("div",{class:"muted"},c.pct==null?"Defina a porcentagem de comissão em Ajustes.":`${c.vs.length} venda(s) em ${mesNome(mes)} · total vendido ${brl(c.total)} × ${String(c.pct).replace(".",",")}%`),
+          el("div",{class:"row"},c.pago?el("span",{class:"pill ok"},`Comissão paga em ${dataBR(c.pago.pagoEm)}`):(c.vs.length?el("span",{class:"pill warn"},"Pagamento pendente"):el("span",{class:"pill neutral"},"Sem vendas no mês"))),
+          el("div",{class:"row"},
+            el("button",{class:"btn primary",type:"button",onclick:()=>baixarCSV(mes,c)},"Baixar planilha (CSV)"),
+            el("button",{class:"btn",type:"button",onclick:()=>baixarHTML(mes,c)},"Baixar relatório (HTML)"),
+            el("button",{class:"btn",type:"button",onclick:()=>copiarResumo(mes,c)},"Copiar resumo")),
+          S.isAdmin&&c.vs.length?el("div",{class:"row"},el("button",{class:"btn",type:"button",onclick:()=>marcarPago(mes,c)},c.pago?"Desfazer: marcar como pendente":"Marcar comissão como paga")):null),
+        el("div",{class:"panel"},el("h3",{},"Por forma de pagamento"),
+          c.vs.length?el("div",{class:"bars"},Object.entries(porPg).sort((a,b)=>b[1]-a[1]).map(([k,v])=>el("div",{class:"bar"},el("span",{},k),el("span",{class:"track"},el("i",{style:`width:${(v/max*100).toFixed(1)}%`})),el("span",{class:"num"},brl(v))))):el("div",{class:"empty"},"Sem vendas no período."))),
+      el("div",{class:"panel"},el("h3",{},"Vendas do período"),
+        vs.length?el("div",{class:"tw"},el("table",{},
+          el("thead",{},el("tr",{},["Data","Peça","Cliente","Pagamento","Valor","Comissão"].map((h,i)=>el("th",{class:i>=4?"r":""},h)))),
+          el("tbody",{},vs.map(v=>el("tr",{},el("td",{class:"num"},dataBR(v.data)),el("td",{},v.peca),el("td",{},v.cliente),el("td",{},pgTxt(v)),el("td",{class:"r num"},brl(v.valor)),el("td",{class:"r num"},c.pct==null?"—":brl((+v.valor||0)*c.pct/100))))),
+          el("tfoot",{},el("tr",{},el("td",{colspan:"4"},"Total"),el("td",{class:"r num"},brl(c.total)),el("td",{class:"r num"},c.due==null?"—":brl(c.due)))))):el("div",{class:"empty"},`Nenhuma venda de ${S.myRev.nome} em ${mesNome(mes)}.`)),
+      S.isAdmin?painelAjustes():null);
+  }
+  mesIn.addEventListener("change",r); r();
+  return el("div",{class:"view"},box);
+}
+function painelAjustes(){
+  const com=el("input",{inputmode:"decimal",value:S.cfg.comissao!=null?String(S.cfg.comissao).replace(".",","):"",placeholder:"Ex.: 30"});
+  const nova=el("input",{placeholder:"Nome"});
+  const list=el("span",{class:"muted"},S.revs.length?`Revendedoras: ${S.revs.map(r=>r.nome).join(", ")}`:"");
+  const err=el("div",{class:"err",hidden:true});
+  const form=el("form",{},
+    el("div",{class:"fields"},el("label",{class:"f"},el("span",{},"Comissão das revendedoras (%)"),com),el("label",{class:"f"},el("span",{},"Adicionar revendedora"),nova)),
+    err,el("div",{class:"row"},el("button",{class:"btn primary",type:"submit"},"Salvar ajustes"),list));
+  form.addEventListener("submit",async e=>{
+    e.preventDefault();
+    const pctTxt=com.value.trim(); const pct=pctTxt?parseValor(pctTxt):S.cfg.comissao;
+    if(pctTxt&&!(pct>=0&&pct<=100)){err.textContent="Digite a comissão entre 0 e 100, por exemplo 30.";err.hidden=false;return}
+    err.hidden=true;
+    try{
+      await cfgRef.set({comissao:pct??null},{merge:true});
+      if(nova.value.trim()){
+        const id=randToken(); await revRef(id).set({nome:nova.value.trim(),token:id,criadoEm:new Date().toISOString()});
+        nova.value=""; toast("Revendedora cadastrada. Copie o link dela na tela anterior.");
+      }else toast("Ajustes salvos.");
+    }catch(x){writeError(x)}
+  });
+  return el("div",{class:"panel"},el("h3",{},"Ajustes"),form);
+}
+function baixarArquivo(filename,blob){ const a=document.createElement("a"); a.href=URL.createObjectURL(blob); a.download=filename; document.body.append(a); a.click(); setTimeout(()=>{a.remove();URL.revokeObjectURL(a.href)},1000); }
+function baixarCSV(mes,d){
+  const q=s=>`"${String(s??"").replace(/"/g,'""')}"`; const n=v=>(+v||0).toFixed(2).replace(".",",");
+  const linhas=[["Data","Peça","Cliente","Pagamento","Valor","Comissão"].join(";"),
+    ...[...d.vs].reverse().map(v=>[dataBR(v.data),q(v.peca),q(v.cliente),q(pgTxt(v)),n(v.valor),d.pct==null?"":n((+v.valor||0)*d.pct/100)].join(";")),
+    ["","","","Total",n(d.total),d.due==null?"":n(d.due)].join(";")];
+  baixarArquivo(`comissao-${slug(S.myRev.nome)}-${mes}.csv`, new Blob(["﻿"+linhas.join("\r\n")],{type:"text/csv"}));
+}
+function baixarHTML(mes,d){
+  const porPg={}; for(const v of d.vs) porPg[v.pagamento]=(porPg[v.pagamento]||0)+(+v.valor||0);
+  const html=`<!doctype html><html lang="pt-BR"><meta charset="utf-8"><title>Comissão ${S.myRev.nome} - ${mesNome(mes)}</title>
+<style>body{font-family:system-ui,sans-serif;color:#1F2E35;max-width:760px;margin:32px auto;padding:0 16px}table{border-collapse:collapse;width:100%;margin-top:16px}th,td{border-bottom:1px solid #E8DEE2;padding:7px 8px;text-align:left;font-size:14px}td.r,th.r{text-align:right}.due{font-size:28px;color:#B9584A;font-weight:700}.box{border:1px solid #E8DEE2;border-radius:8px;padding:14px;margin-top:16px}</style>
+<h1>Pytave Fitness · Relatório de comissão</h1><p>Revendedora: <b>${S.myRev.nome}</b> · Período: <b>${mesNome(mes)}</b></p>
+<div class="box"><div>Total vendido: <b>${brl(d.total)}</b> em ${d.vs.length} venda(s)</div><div class="due">A pagar: ${d.due==null?"—":brl(d.due)}</div></div>
+<div class="box"><b>Por forma de pagamento</b>${Object.entries(porPg).map(([k,v])=>`<div>${k}: ${brl(v)}</div>`).join("")||"<div>—</div>"}</div>
+<table><thead><tr><th>Data</th><th>Peça</th><th>Cliente</th><th>Pagamento</th><th class="r">Valor</th></tr></thead><tbody>${[...d.vs].reverse().map(v=>`<tr><td>${dataBR(v.data)}</td><td>${v.peca}</td><td>${v.cliente}</td><td>${pgTxt(v)}</td><td class="r">${brl(v.valor)}</td></tr>`).join("")}</tbody></table></html>`;
+  baixarArquivo(`relatorio-comissao-${slug(S.myRev.nome)}-${mes}.html`, new Blob([html],{type:"text/html"}));
+}
+function copiarResumo(mes,d){
+  const txt=`Pytave · Comissão de ${S.myRev.nome} — ${mesNome(mes)}\nVendas: ${d.vs.length}\nTotal vendido: ${brl(d.total)}\nA pagar: ${d.due==null?"—":brl(d.due)}`;
+  navigator.clipboard.writeText(txt).then(()=>toast("Resumo copiado."),()=>toast("Não consegui copiar."));
+}
+async function marcarPago(mes,d){
+  try{ if(d.pago){ await revRef(S.myTok).collection("pagamentos").doc(mes).delete(); toast("Comissão marcada como pendente."); }
+       else{ await revRef(S.myTok).collection("pagamentos").doc(mes).set({pagoEm:today,valor:d.due,total:d.total,comissao:d.pct}); toast(`Comissão de ${brl(d.due)} marcada como paga.`); } }
+  catch(x){writeError(x)}
+}
+
+/* ---------------- visão admin (lista de revendedoras) ---------------- */
+function linkDe(tok){return location.origin+location.pathname+"#"+tok}
+function acardRev(x){
+  const abre=()=>{location.hash=x.id};
+  return el("div",{class:"acard"},
+    el("div",{role:"button",tabindex:"0",onclick:abre,onkeydown:e=>{if(e.key==="Enter")abre()}},el("h3",{},x.nome)),
+    el("div",{class:"acc",onclick:e=>e.stopPropagation()},
+      el("div",{class:"row2"},el("span",{class:"muted"},"Link"),el("button",{class:"btn small",type:"button",onclick:()=>copiar(linkDe(x.id))},"Copiar link")),
+      el("div",{class:"row2"},el("span",{class:"muted"},"Código"),el("button",{class:"btn small",type:"button",onclick:()=>copiar(x.id)},"Copiar código")),
+      el("code",{},x.id)),
+    el("div",{class:"row"},el("button",{class:"btn small",type:"button",onclick:abre},"Abrir painel dela")));
+}
+const MIGRACAO_INICIAL = {
+  comissao: 25,
+  revendedoras: [{
+    nome: "Jeniffer",
+    notas: [
+      {numero:"1", data:"2026-10-14", arquivoUrl:"migracao/nota-2026-10-14.pdf", arquivoNome:"Nota-Entrega-Pytave-Jeniffer (1).pdf",
+       itens:[{id:"nbmylemc",peca:"Conjunto Carol - Rosa",qtd:4,tamanho:"",valor:189.99},{id:"jxf02gqh",peca:"Conjunto Carol - Pink",qtd:1,tamanho:"",valor:189.99},{id:"5xypg483",peca:"Conjunto Carol - Verde",qtd:1,tamanho:"",valor:189.99},{id:"m2kl3div",peca:"Conjunto Carol - Marrom",qtd:2,tamanho:"",valor:189.99},{id:"ygmt6dh8",peca:"Conjunto Carol - Verde limão",qtd:1,tamanho:"",valor:189.99},{id:"2g6gw4rr",peca:"Conjunto Carol - Amarelo",qtd:2,tamanho:"",valor:189.99},{id:"pni6xy4y",peca:"Conjunto Carol - Laranja",qtd:2,tamanho:"",valor:189.99},{id:"mqlkp2rp",peca:"Macaquinho Malu - Preto",qtd:7,tamanho:"",valor:249.9},{id:"1fe9d7rg",peca:"Conjunto Carli - Cinza",qtd:2,tamanho:"",valor:209.99},{id:"1h3lsqlw",peca:"Conjunto Carli - Marrom",qtd:2,tamanho:"",valor:209.99},{id:"ox5uc7jn",peca:"Conjunto Carli - Preto",qtd:3,tamanho:"",valor:209.99},{id:"rriq7ypr",peca:"Conjunto Carli - Terracota",qtd:2,tamanho:"",valor:209.99},{id:"xc95ykac",peca:"Conjunto Carli - Verde militar",qtd:2,tamanho:"",valor:209.99},{id:"4dk33r2h",peca:"Conjunto Carli - Azul",qtd:2,tamanho:"",valor:209.99},{id:"vtlb2gsa",peca:"Top Pytave - Preto c/ detalhes em branco",qtd:4,tamanho:"",valor:78},{id:"qyhipu6h",peca:"Conjunto Dalila",qtd:11,tamanho:"",valor:214.9},{id:"qolv2etx",peca:"Conjunto Mariana - Branco, vermelho, roxo e marrom",qtd:5,tamanho:"",valor:259.9},{id:"vz4e9x30",peca:"Conjunto Mariana - Flores roxo (outro modelo)",qtd:2,tamanho:"",valor:259.9},{id:"kpj8bacu",peca:"Conjunto Brasil - Azul",qtd:1,tamanho:"",valor:189.9},{id:"g5avx62p",peca:"Conjunto Endorphina - Verde/amarelo",qtd:2,tamanho:"G",valor:179.9},{id:"4h5r7o6p",peca:"Conjunto Endorphina - Verde/amarelo",qtd:1,tamanho:"M",valor:179.9},{id:"lke7pg0w",peca:"Conjunto Endorphina - Azul claro/escuro",qtd:3,tamanho:"G",valor:179.9},{id:"kc98d43i",peca:"Conjunto Endorphina - Azul claro/escuro",qtd:3,tamanho:"M",valor:179.9},{id:"27bigsgs",peca:"Conjunto Endorphina - Rosa/vinho",qtd:1,tamanho:"G",valor:179.9},{id:"gx2g9i9k",peca:"Conjunto Aura - Rosa/cinza",qtd:1,tamanho:"G",valor:178.9},{id:"rtlk9csi",peca:"Conjunto Aura - Rosa/roxo",qtd:1,tamanho:"M",valor:178.9},{id:"xylbogh3",peca:"Conjunto Aura - Azul/petróleo",qtd:1,tamanho:"G",valor:178.9},{id:"k999vas8",peca:"Conjunto Aura - Rosa/azul",qtd:1,tamanho:"BB M",valor:178.9},{id:"pmzczk2e",peca:"Conjunto Aura - Preto/azul",qtd:2,tamanho:"G",valor:178.9},{id:"qvm8obv4",peca:"Conjunto Aura - Laranja neon/marrom",qtd:1,tamanho:"G",valor:178.9},{id:"bhppzwds",peca:"Conjunto Aura - Roxo/azul",qtd:1,tamanho:"BB G",valor:178.9},{id:"zacx2ujt",peca:"Conjunto Aura - Vinho/bege",qtd:2,tamanho:"G",valor:178.9},{id:"dgm6hgw0",peca:"Macacão Bella - Cinza",qtd:1,tamanho:"M",valor:239.9},{id:"cif33ke3",peca:"Macacão Bella - Marrom",qtd:1,tamanho:"M",valor:239.9},{id:"quii7z36",peca:"Macacão Bella - Azul",qtd:1,tamanho:"BB M",valor:239.9}]},
+      {numero:"2", data:"2026-10-30", arquivoUrl:"migracao/nota-2026-10-30.pdf", arquivoNome:"Nota de Entrega Pytave 30.10.pdf",
+       itens:[{id:"2x942w00",peca:"Pytave Pimenta",qtd:6,tamanho:"",valor:240},{id:"rurs2amw",peca:"Pytave",qtd:4,tamanho:"",valor:180},{id:"sqpesyat",peca:"Vestido Betch",qtd:2,tamanho:"",valor:200},{id:"drcjnn9k",peca:"Conjunto Given Legging",qtd:3,tamanho:"",valor:300},{id:"3ajon2e5",peca:"Conjunto Flare Azul Marinho",qtd:1,tamanho:"",valor:280},{id:"04xbmbvv",peca:"Macacão Luana Glow Cacau",qtd:1,tamanho:"GG",valor:259.9},{id:"70hz1kz1",peca:"Macacão Luana Glow Malva",qtd:1,tamanho:"G",valor:259.9},{id:"jirzly3f",peca:"Conjunto Ticiane Azul ônix",qtd:1,tamanho:"G",valor:189.9},{id:"e2444oqz",peca:"Conjunto Ticiane Preto",qtd:1,tamanho:"GG",valor:189.9},{id:"jzkqefi2",peca:"Conjunto Priscila Preto",qtd:1,tamanho:"G",valor:219.9},{id:"vq3i7osp",peca:"Conjunto Given Bermuda Preto",qtd:1,tamanho:"M",valor:240},{id:"6wlujbo4",peca:"Top Pimenta",qtd:3,tamanho:"",valor:76},{id:"okcujsso",peca:"Conjunto Tauna Preto",qtd:2,tamanho:"GG",valor:0},{id:"71h07fje",peca:"Conjunto Tauna Azul marinho",qtd:2,tamanho:"GG",valor:0},{id:"86l10cfd",peca:"Conjunto Tauna Verde militar",qtd:2,tamanho:"GG",valor:0},{id:"m55sn0ud",peca:"Conjunto Tauna Marrom",qtd:2,tamanho:"GG",valor:0},{id:"d5rpcl32",peca:"Conjunto Beatriz Marrom",qtd:2,tamanho:"M",valor:240},{id:"q931seiq",peca:"Conjunto Beatriz Azul royal",qtd:2,tamanho:"M",valor:240},{id:"7sfxi6vw",peca:"Conjunto Beatriz Marrom",qtd:2,tamanho:"G",valor:240},{id:"rhtztql8",peca:"Conjunto Beatriz Vermelho",qtd:1,tamanho:"G",valor:240},{id:"x5mdmtgt",peca:"Conjunto Beatriz Vinho",qtd:1,tamanho:"G",valor:240},{id:"790k7ddc",peca:"Conjunto Essência Verde/cinza",qtd:2,tamanho:"M",valor:224.9},{id:"pcsfkr13",peca:"Conjunto Essência Preto c/ amarelo",qtd:2,tamanho:"G",valor:224.9},{id:"3vl3f2fm",peca:"Conjunto Mariana Legging",qtd:14,tamanho:"",valor:259.9},{id:"hnty7j1p",peca:"Conjunto Betch",qtd:7,tamanho:"",valor:210},{id:"fa8q3h70",peca:"Conjunto Dalila",qtd:11,tamanho:"",valor:214.9},{id:"wvn77ol7",peca:"Camisa manga longa feminina Branca",qtd:2,tamanho:"M",valor:117.9},{id:"idpjil5h",peca:"Camisa manga longa feminina Preta",qtd:1,tamanho:"M",valor:117.9},{id:"bwodlf1w",peca:"Camisa manga longa feminina Azul marinho",qtd:1,tamanho:"M",valor:117.9},{id:"yc8ybpmb",peca:"Camisa manga longa feminina Cinza",qtd:1,tamanho:"M",valor:117.9},{id:"1evwux4s",peca:"Camisa manga longa feminina Verde",qtd:1,tamanho:"M",valor:117.9},{id:"q3tmb93p",peca:"Tuli Marrom",qtd:2,tamanho:"M",valor:129.9},{id:"990iimfq",peca:"Camisa masculina",qtd:18,tamanho:"",valor:89.9}]}
+    ],
+    vendas: [
+      {data:"2026-11-05",itemKey:"dn3k66s8mw3wh5br:xylbogh3",peca:"Conjunto Aura - Azul/petróleo G",cliente:"maria",valor:178.9,pagamento:"Cartão de crédito",parcelas:null,obs:"no torneio"},
+      {data:"2026-11-24",itemKey:"dn3k66s8mw3wh5br:kc98d43i",peca:"Conjunto Endorphina - Azul claro/escuro M",cliente:"pamela",valor:179.9,pagamento:"Dinheiro",parcelas:null,obs:""}
+    ]
+  }]
+};
+async function importarDadosAntigos(btn){
+  btn.disabled=true; btn.textContent="Importando…";
+  try{
+    await cfgRef.set({comissao:MIGRACAO_INICIAL.comissao},{merge:true});
+    for(const r of MIGRACAO_INICIAL.revendedoras){
+      const tok=randToken();
+      await revRef(tok).set({nome:r.nome,token:tok,criadoEm:new Date().toISOString()});
+      for(const n of r.notas){
+        // os itens antigos usavam uma chave "notaId:itemId" ligada às vendas — mantemos o mesmo
+        // padrão de chave aqui trocando só o id da nota pelo novo id gerado.
+        const notaId=uid()+Date.now().toString(36);
+        const mapaChave={};
+        const itensNovos=n.itens.map(it=>{ mapaChave[it.id]=`${notaId}:${it.id}`; return it; });
+        await revRef(tok).collection("notas").doc(notaId).set({numero:n.numero,data:n.data,itens:itensNovos,arquivoUrl:n.arquivoUrl,arquivoNome:n.arquivoNome,criadoEm:Date.now()});
+        n._notaId=notaId;
+      }
+      for(const v of r.vendas){
+        const [, itemId] = (v.itemKey||"").split(":");
+        const nota=r.notas.find(n=>n.itens.some(i=>i.id===itemId));
+        const key = nota ? `${nota._notaId}:${itemId}` : null;
+        await revRef(tok).collection("vendas").doc(uid()+Date.now().toString(36)).set({...v,itemKey:key,criadoEm:Date.now()});
+      }
+    }
+    toast("Dados antigos importados.");
+  }catch(x){ writeError(x); }
+  btn.disabled=false; btn.textContent="Importar dados antigos (Jeniffer)";
+}
+function adminView(){
+  const ls=S.revs.slice().sort((a,b)=>(a.nome||"").localeCompare(b.nome||"","pt-BR"));
+  return el("div",{class:"view"},
+    el("div",{class:"row",style:"justify-content:flex-end"},
+      S.revsReady&&!ls.length?el("button",{class:"btn",onclick:e=>importarDadosAntigos(e.currentTarget)},"Importar dados antigos (Jeniffer)"):null,
+      el("button",{class:"btn primary",onclick:novaRevendedoraSheet},"+ Nova revendedora")),
+    !S.revsReady?el("div",{class:"empty"},el("span",{class:"spin"}),el("div",{style:"margin-top:10px"},"Carregando…")):
+    !ls.length?el("div",{class:"empty"},"Nenhuma revendedora cadastrada ainda. Clique em “+ Nova revendedora”, ou em “Importar dados antigos” para trazer o que já existia."):
+    el("div",{class:"agrid"},ls.map(x=>acardRev(x))),
+    painelAjustesGeral());
+}
+function painelAjustesGeral(){
+  const com=el("input",{inputmode:"decimal",value:S.cfg.comissao!=null?String(S.cfg.comissao).replace(".",","):"",placeholder:"Ex.: 30"});
+  const err=el("div",{class:"err",hidden:true});
+  const form=el("form",{},el("label",{class:"f",style:"max-width:220px"},el("span",{},"Comissão padrão (%)"),com),err,
+    el("div",{class:"row"},el("button",{class:"btn primary",type:"submit"},"Salvar")));
+  form.addEventListener("submit",async e=>{
+    e.preventDefault(); const pctTxt=com.value.trim(); const pct=pctTxt?parseValor(pctTxt):null;
+    if(pctTxt&&!(pct>=0&&pct<=100)){err.textContent="Digite entre 0 e 100.";err.hidden=false;return}
+    err.hidden=true;
+    try{ await cfgRef.set({comissao:pct},{merge:true}); toast("Salvo."); }catch(x){writeError(x)}
+  });
+  return el("div",{class:"panel"},el("h3",{},"Ajustes gerais"),form);
+}
+function novaRevendedoraSheet(){
+  const nome=el("input",{required:true});
+  const err=el("div",{class:"err",hidden:true});
+  const form=el("form",{},el("label",{class:"f"},"Nome",nome),err,
+    el("div",{class:"row"},el("button",{class:"btn primary",type:"submit"},"Cadastrar"),el("button",{class:"btn",type:"button",onclick:closeOverlay},"Cancelar")));
+  form.addEventListener("submit",async e=>{
+    e.preventDefault(); if(!nome.value.trim()){err.textContent="Dê um nome.";err.hidden=false;return}
+    try{ const id=randToken(); await revRef(id).set({nome:nome.value.trim(),token:id,criadoEm:new Date().toISOString()});
+      closeOverlay(); toast("Revendedora cadastrada."); }
+    catch(x){err.textContent="Não deu para salvar.";err.hidden=false}
+  });
+  scrim(el("div",{},el("div",{class:"sh"},el("h2",{},"Nova revendedora"),el("button",{class:"close",onclick:closeOverlay},"×")),form));
+  setTimeout(()=>nome.focus(),30);
+}
+
+/* ---------------- início ---------------- */
+function lerHash(){ const h=(location.hash||"").slice(1)||null; if(h!==S.myTok){ S.myTok=h; S.myRev=undefined; S.myRevErr=false; S.view="resumo"; if(h) carregarRevendedora(h); else pararEscutas(); } }
+window.addEventListener("hashchange",()=>{lerHash();render()});
+lerHash();
+render();
+auth.onAuthStateChanged(user=>{
+  S.authReady=true; S.authUser=user;
+  S.isAdmin=!!(user&&user.email&&user.email.toLowerCase().endsWith(ADMIN_DOMAIN));
+  if(S.isAdmin){
+    db.collection("revendedoras").onSnapshot(s=>{S.revs=s.docs.map(d=>({id:d.id,...d.data()}));S.revsReady=true;render()},()=>{});
+  }
+  render();
+});
+cfgRef.onSnapshot(s=>{S.cfg=s.exists?s.data():S.cfg;render()},()=>{});
+</script>
+</body>
+</html>
