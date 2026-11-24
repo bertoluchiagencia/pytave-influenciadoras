@@ -72,6 +72,14 @@ table{width:100%;border-collapse:collapse;font-size:13.5px;min-width:560px}
 th,td{text-align:left;padding:10px 12px;border-bottom:1px solid var(--line);vertical-align:top}
 th{font-size:11.5px;text-transform:uppercase;letter-spacing:.06em;color:var(--muted);font-weight:600;background:var(--tint)}
 tr:last-child td{border-bottom:none}
+.pgrid{display:grid;grid-template-columns:repeat(auto-fit,minmax(340px,1fr));gap:14px}
+.pcard{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:18px;display:flex;flex-direction:column;gap:12px;min-width:0}
+.pcard-head{display:flex;align-items:center;justify-content:space-between;gap:10px;flex-wrap:wrap}
+.pcard-head h3{font-size:1.05rem}
+.pcard-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.pcard-field{min-width:0;word-break:break-word}
+.pcard-label{font-size:11px;text-transform:uppercase;letter-spacing:.06em;color:var(--muted);font-weight:600;margin-bottom:3px}
+.pcard .btn{align-self:flex-start}
 .tokenbox{font-family:ui-monospace,"SFMono-Regular",Menlo,monospace;font-size:12px;background:var(--bg);border:1px solid var(--line);border-radius:8px;padding:7px 9px;word-break:break-all}
 .toast{position:fixed;left:50%;bottom:24px;transform:translateX(-50%);background:var(--ink);color:var(--bg);padding:10px 16px;border-radius:10px;font-size:13px;z-index:99;box-shadow:0 8px 24px rgba(0,0,0,.18)}
 </style>
@@ -199,26 +207,25 @@ function copiar(txt){navigator.clipboard.writeText(txt).then(()=>toast("Link cop
 function adminView(){
   if(!ADMIN_READY){carregarTudo();return el("div",{class:"empty"},el("span",{class:"spin"}),el("div",{style:"margin-top:10px"},"Carregando…"))}
   const faltam=PESSOAS.filter(p=>!(ADMIN_DATA[p.id]&&(ADMIN_DATA[p.id].tamanhoRoupa||ADMIN_DATA[p.id].tamanhoSapato||ADMIN_DATA[p.id].presente)));
-  const tb=el("tbody",{},PESSOAS.map(p=>{
+  const cards=PESSOAS.map(p=>{
     const r=ADMIN_DATA[p.id]||{};
     const respondeu=!!(r.tamanhoRoupa||r.tamanhoSapato||r.presente);
     const link=PAGE_URL+"#"+p.id;
-    return el("tr",{},
-      el("td",{},p.nome),
-      el("td",{},respondeu?el("span",{class:"pill ok"},"Respondeu"):el("span",{class:"pill idle"},"Falta responder")),
-      el("td",{},r.tamanhoRoupa||"—"),
-      el("td",{},r.tamanhoSapato||"—"),
-      el("td",{},r.presente||"—"),
-      el("td",{},el("button",{class:"btn small",type:"button",onclick:()=>copiar(link)},"🔗 Copiar link")));
-  }));
+    return el("div",{class:"pcard"},
+      el("div",{class:"pcard-head"},
+        el("h3",{},p.nome),
+        respondeu?el("span",{class:"pill ok"},"Respondeu"):el("span",{class:"pill idle"},"Falta responder")),
+      el("div",{class:"pcard-grid"},
+        el("div",{class:"pcard-field"},el("div",{class:"pcard-label"},"Roupa"),el("div",{},r.tamanhoRoupa||"—")),
+        el("div",{class:"pcard-field"},el("div",{class:"pcard-label"},"Sapato"),el("div",{},r.tamanhoSapato||"—"))),
+      el("div",{class:"pcard-field"},el("div",{class:"pcard-label"},"Ideias de presente"),el("div",{style:"white-space:pre-wrap"},r.presente||"—")),
+      el("button",{class:"btn small",type:"button",onclick:()=>copiar(link)},"🔗 Copiar link"));
+  });
   return el("div",{},
     el("div",{class:"panel"},
       el("h2",{style:"margin-bottom:6px"},"Respostas"),
       el("p",{class:"muted",style:"margin-bottom:0"},faltam.length?("Ainda falta responder: "+faltam.map(p=>p.nome).join(", ")+"."):"Todo mundo já respondeu! 🎉")),
-    el("div",{class:"tbl"},el("table",{},
-      el("colgroup",{},
-        el("col",{style:"width:14%"}),el("col",{style:"width:10%"}),el("col",{style:"width:12%"}),el("col",{style:"width:9%"}),el("col",{style:"width:43%"}),el("col",{style:"width:12%"})),
-      el("thead",{},el("tr",{},el("th",{},"Colaboradora"),el("th",{},"Status"),el("th",{},"Roupa"),el("th",{},"Sapato"),el("th",{},"Ideias"),el("th",{},"Link"))),tb)));
+    el("div",{class:"pgrid"},cards));
 }
 
 auth.onAuthStateChanged(user=>{
