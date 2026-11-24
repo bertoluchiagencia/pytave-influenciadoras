@@ -61,6 +61,8 @@ apague nada que já está lá, só adicione os trechos abaixo.
 
 3. Clique em **Publicar**.
 
+> ✅ Já publicado no Console (24/11) e testado no simulador de regras: criação de gasto liberada para qualquer um com o link, update/delete bloqueado para quem não é admin.
+
 ## 2. Storage (upload das notas de remessa)
 
 1. Abra https://console.firebase.google.com/project/pytave-influenciadoras/storage/rules
