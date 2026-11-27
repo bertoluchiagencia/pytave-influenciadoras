@@ -510,7 +510,7 @@ function formInflu(x){
     if(!nome.value.trim()){err.textContent="Dê um nome.";err.hidden=false;return}
     const body={nome:nome.value.trim(),cupom:cupom.value.trim(),inicio:inicio.value||"",duracaoMeses:dur.disabled||!dur.value?null:Number(dur.value),entregaveis:entreg.value.trim(),
       regras:{reelsPorMes:Number(reels.value)||0,storiesSeqPorMes:Number(stories.value)||0,feedPorMes:Number(feed.value)||0},
-      produtos:x.produtos||{},conteudo:x.conteudo||{},compras:x.compras||{},token:x.id||null,atualizadoEm:new Date().toISOString()};
+      produtos:x.produtos||{},conteudo:x.conteudo||{},compras:x.compras||[],token:x.id||null,atualizadoEm:new Date().toISOString()};
     try{
       let id=x.id;
       if(isNew){id=randToken();body.criadoEm=new Date().toISOString();body.token=id}
