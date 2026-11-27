@@ -389,11 +389,21 @@ function avatarEl(x,size){
 }
 function linkDe(x){return location.origin+location.pathname+"#"+encodeURIComponent(x.slug||x.id)}
 async function garantirSlug(x){
-  if(x.slug)return x.slug;
+  if(x.slug){
+    try{
+      const p=await slugRef(x.slug).get();
+      if(!p.exists||p.data().token!==x.id)await slugRef(x.slug).set({token:x.id},{merge:true});
+    }catch(e){}
+    return x.slug;
+  }
   const base=slugify(x.nome||"influenciadora");
   let sl=base,k=2;
   while((await slugRef(sl).get()).exists)sl=base+"-"+(k++);
-  try{await influRef(x.id).update({slug:sl});x.slug=sl}catch(e){}
+  try{
+    await influRef(x.id).update({slug:sl});
+    await slugRef(sl).set({token:x.id},{merge:true});
+    x.slug=sl;
+  }catch(e){}
   return x.slug||sl;
 }
 function acessoBlock(x){
