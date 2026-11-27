@@ -159,6 +159,8 @@ function closeOverlay(){const s=$(".scrim");if(s)s.remove()}
 function scrim(content){closeOverlay();const w=el("div",{class:"scrim",onclick:e=>{if(e.target.classList.contains("scrim"))closeOverlay()}},el("div",{class:"sheet"},content));document.body.append(w)}
 function copiar(txt){navigator.clipboard.writeText(txt).then(()=>toast("Copiado"),()=>toast(txt))}
 function influRef(token){return db.collection("influs").doc(token)}
+function slugRef(slug){return db.collection("slugs").doc(slug)}
+const slugify=t=>String(t||"").normalize("NFD").replace(/[̀-ͯ]/g,"").toLowerCase().replace(/[^a-z0-9]+/g,"-").replace(/^-+|-+$/g,"").slice(0,48)||"influenciadora";
 const cfgRef=db.collection("config").doc("pytave");
 
 /* ---------------- render raiz ---------------- */
@@ -220,10 +222,20 @@ function pendenteDe(x,ym){
 /* ---------------- visão pública (influenciadora) ---------------- */
 async function carregarPorToken(tok){
   try{
-    const snap=await influRef(tok).get();
+    // 1) tenta como token bruto (compatibilidade com links antigos/internos)
+    let snap=await influRef(tok).get();
+    let real=tok;
+    if(!snap.exists){
+      // 2) tenta resolver como link legível (nome da influenciadora)
+      const slugSnap=await slugRef(tok).get();
+      if(slugSnap.exists&&slugSnap.data().token){
+        real=slugSnap.data().token;
+        snap=await influRef(real).get();
+      }
+    }
     if(!snap.exists){S.myInfErr=true;render();return}
     S.myInf={id:snap.id,...snap.data()};
-    influRef(tok).onSnapshot(s=>{if(s.exists){S.myInf={id:s.id,...s.data()};render()}});
+    influRef(real).onSnapshot(s=>{if(s.exists){S.myInf={id:s.id,...s.data()};render()}});
   }catch(e){S.myInfErr=true;render()}
 }
 function gateAcesso(){
@@ -375,14 +387,22 @@ function avatarEl(x,size){
   if(x&&x.foto)return el("div",{class:cls},el("img",{src:x.foto,alt:x.nome||"",loading:"lazy",onerror:e=>{e.target.replaceWith(el("span",{},iniciais(x.nome)))}}));
   return el("div",{class:cls},iniciais(x&&x.nome));
 }
-function linkDe(x){return location.origin+location.pathname+"#"+x.id}
+function linkDe(x){return location.origin+location.pathname+"#"+encodeURIComponent(x.slug||x.id)}
+async function garantirSlug(x){
+  if(x.slug)return x.slug;
+  const base=slugify(x.nome||"influenciadora");
+  let sl=base,k=2;
+  while((await slugRef(sl).get()).exists)sl=base+"-"+(k++);
+  try{await influRef(x.id).update({slug:sl});x.slug=sl}catch(e){}
+  return x.slug||sl;
+}
 function acessoBlock(x){
   return el("div",{class:"acc",onclick:e=>e.stopPropagation()},
-    el("div",{class:"row2"},el("span",{class:"muted"},"Link"),
-      el("button",{class:"btn small",type:"button",onclick:()=>copiar(linkDe(x))},"Copiar link")),
+    el("div",{class:"row2"},el("span",{class:"muted"},x.slug?"Link":"Gerando link legível…"),
+      el("button",{class:"btn small",type:"button",onclick:async()=>{await garantirSlug(x);copiar(linkDe(x))}},"Copiar link")),
     el("div",{class:"row2"},el("span",{class:"muted"},"Código"),
       el("button",{class:"btn small",type:"button",onclick:()=>copiar(x.id)},"Copiar código")),
-    el("code",{},x.id));
+    el("code",{},x.slug||x.id));
 }
 function acardInflu(x){
   const falta=!(x.produtos||{})[curYM];
@@ -430,7 +450,7 @@ async function sheetImportar(){
   const err=el("div",{class:"err",hidden:true});
   const ok=el("div",{class:"note",hidden:true,style:"color:var(--ok)"});
   const form=el("form",{},
-    el("p",{class:"muted",style:"margin:0 0 10px"},"Isso atualiza (ou cria) as influenciadoras pelo token, sem apagar nada que já existe aqui. Usado pela sincronização com o Sistema Bertoluchi."),
+    el("p",{class:"muted",style:"margin:0 0 10px"},"Isso atualiza (ou cria) as influenciadoras pelo token, sem apagar nada que já existe aqui. Se o item trouxer um \"slug\" (nome legível), o link de acesso dela passa a usar esse nome. Usado pela sincronização com o Sistema Bertoluchi."),
     el("label",{class:"f"},"JSON",txt),err,ok,
     el("div",{class:"row",style:"margin-top:10px"},
       el("button",{class:"btn primary",type:"submit"},"Importar"),
@@ -446,6 +466,7 @@ async function sheetImportar(){
       for(const item of arr){
         if(!item.token)continue;
         await influRef(item.token).set(item,{merge:true});
+        if(item.slug)await slugRef(item.slug).set({token:item.token},{merge:true});
         n++;
       }
       ok.textContent=n+" influenciadora(s) sincronizada(s).";ok.hidden=false;
@@ -494,7 +515,15 @@ function formInflu(x){
       let id=x.id;
       if(isNew){id=randToken();body.criadoEm=new Date().toISOString();body.token=id}
       else body.token=id;
+      let slug=x.slug;
+      if(!slug){
+        const base=slugify(body.nome);let sl=base,k=2;
+        while((await slugRef(sl).get()).exists)sl=base+"-"+(k++);
+        slug=sl;
+      }
+      body.slug=slug;
       await influRef(id).set(body,{merge:!isNew});
+      await slugRef(slug).set({token:id},{merge:true});
       toast(isNew?"Influenciadora cadastrada":"Ficha salva");closeOverlay();
     }catch(z){err.textContent="Não deu para salvar. Tente de novo.";err.hidden=false}
   });
@@ -512,9 +541,9 @@ function sheetInflu(id){
     el("div",{class:"sh"},el("h2",{},x.nome),el("button",{class:"close",onclick:closeOverlay},"×")),
     el("p",{class:"muted"},contratoTxt(x)+(x.cupom?" · Cupom "+x.cupom:"")),
     el("div",{class:"sec"},"Link de acesso dela (só ela vê os dados dela)"),
-    el("div",{},el("div",{class:"tokenbox"},linkDe(x)),
+    el("div",{},el("div",{class:"tokenbox"},x.slug?linkDe(x):"Gerando link legível…"),
       el("div",{class:"row",style:"margin-top:8px"},
-        el("button",{class:"btn small",type:"button",onclick:()=>copiar(linkDe(x))},"Copiar link"),
+        el("button",{class:"btn small",type:"button",onclick:async()=>{await garantirSlug(x);copiar(linkDe(x))}},"Copiar link"),
         el("button",{class:"btn small",type:"button",onclick:()=>copiar(x.id)},"Copiar código"))),
     el("div",{class:"sec"},"Produto recebido por mês"),
     el("div",{class:"row"},meses.map(ym=>{
