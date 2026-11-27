@@ -175,7 +175,7 @@ function body(){
   if(!S.authReady)return el("div",{class:"empty"},el("span",{class:"spin"}),el("div",{style:"margin-top:10px"},"Carregando…"));
   if(S.isAdmin){
     if(S.myTok){
-      const inf=S.infs.find(x=>x.id===S.myTok);
+      const inf=S.infs.find(x=>x.id===S.myTok||x.slug===S.myTok);
       if(inf)return adminPreviewView(inf);
       if(!S.infsReady)return el("div",{class:"empty"},el("span",{class:"spin"}),el("div",{style:"margin-top:10px"},"Carregando…"));
       return el("div",{class:"empty"},"Influenciadora não encontrada.",
