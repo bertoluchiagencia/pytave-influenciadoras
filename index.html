@@ -202,7 +202,8 @@ function mesesContrato(x){
     let m=out[out.length-1];
     while(m<fimDez){m=addMonthsYM(m,1);out.push(m)}
   }
-  return out;
+  const excl=new Set(x.mesesExcluidos||[]);
+  return out.filter(m=>!excl.has(m));
 }
 function anosMeses(meses){
   const map=new Map();
